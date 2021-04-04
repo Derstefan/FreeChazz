@@ -1,18 +1,18 @@
 package com.freechess.game.core;
 
-import com.freechess.game.pieces.Piece;
-
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class Player {
 
+    private EPlayer playerType;
+
     private String name;
-    private ArrayList<Piece> graveyard = new ArrayList<>();
     private UUID playerId;
 
-    public Player(String name) {
+    public Player(String name, EPlayer playerType) {
         this.name = name;
+        playerId = UUID.randomUUID();
+        this.playerType = playerType;
     }
 
     public String getName() {
@@ -23,8 +23,15 @@ public class Player {
         this.name = name;
     }
 
-    public void addToGraveyard(Piece p){
-        graveyard.add(p);
-        p.setPos(null);
+    public UUID getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(UUID playerId) {
+        this.playerId = playerId;
+    }
+
+    public EPlayer getPlayerType() {
+        return playerType;
     }
 }

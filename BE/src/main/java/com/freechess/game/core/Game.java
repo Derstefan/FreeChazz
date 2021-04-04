@@ -1,9 +1,8 @@
 package com.freechess.game.core;
 
-import com.freechess.game.pieces.Piece;
-import com.freechess.game.pieces.classic.King;
+import com.freechess.game.pieces.generators.PieceGenerator;
 
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 public class Game {
@@ -14,31 +13,31 @@ public class Game {
     private Player player1;
     private Player player2;
 
-    // GameEnd Pieces
-    private Piece king1;
-    private Piece king2;
-
-    private ArrayList<Piece> graveYard1 = new ArrayList<>();
-    private ArrayList<Piece> graveYard2 = new ArrayList<>();
-
     private int round = 0;
     private Player playersTurn;
 
 
-    public Game(String player1,String player2){
-        this.player1 = new Player(player1);
-        this.player2 = new Player(player2);
-        playersTurn=this.player1;
-        init();
-
-
-
+    public Game(){
+        gameId = UUID.randomUUID();
+        board = new Board(30,30);
+        if(Math.random()>=0.5){
+            playersTurn=player1;
+        } else {
+            playersTurn = player2;
+        }
     }
 
-    private void init(){
-        Board board = new Board();
-        king1 = new King(board,player1,new Position(0,4));
-        king2 = new King(board,player2,new Position(7,4));
+
+    public boolean join(Player player){
+        if(player1==null) {
+            player1 = player;
+            return true;
+        }
+        if(player2==null){
+            player2 = player;
+            return true;
+        }
+        return false;
     }
 
 
@@ -50,7 +49,7 @@ public class Game {
 
             // is it possible move??
             if(piece.getPossibleMoves().contains(toPos)){
-                piece.perform(toPos);
+                board.perform(fromPos,toPos);
             }
         }
         endTurn();
@@ -59,7 +58,9 @@ public class Game {
 
     private void endTurn(){
         //Check Win/Lose
-
+        if(board.getWinner()!=null){
+            // board.getWinner() winns
+        }
 
 
         if(playersTurn.equals(player1)){
@@ -67,7 +68,28 @@ public class Game {
         } else {
             playersTurn=player1;
         }
+        board.computePossibleMoves();
+        round++;
     }
 
 
+    public UUID getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(UUID gameId) {
+        this.gameId = gameId;
+    }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
 }

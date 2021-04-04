@@ -1,6 +1,7 @@
 package com.freechess.game.core;
 
-import com.freechess.game.pieces.Piece;
+import com.freechess.game.pieces.PieceType;
+import com.freechess.game.pieces.generators.PieceGenerator;
 
 import java.util.ArrayList;
 
@@ -8,73 +9,166 @@ public class Board {
 
     private int width = 8;
     private int height = 8;
-    private Piece[][] board = new Piece[width][height];
 
-    public Board() {
+    private Piece king1;
+    private Piece king2;
 
+    private EPlayer winner = null;
+
+    private ArrayList<Piece> graveyard = new ArrayList<>();
+
+
+    private Piece[][] board;
+
+    public Board(int width, int height) {
+        this.width = width;
+        this.height = height;
+        board = new Piece[height][width];
+        init();
+        computePossibleMoves();
+        System.out.println(drawBoard());
+    }
+
+    private void init(){
+        king1 = new Piece(EPlayer.Player1, PieceGenerator.generate());
+        king2 = new Piece(EPlayer.Player2, PieceGenerator.generate());
+        addPiece(king1,new Position(1,3));
+        addPiece(king2,new Position(4,2));
+        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(0,0));
+        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(5,2));
+        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(2,4));
+        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(13,4));
+        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(10,2));
+        addPiece(new Piece(EPlayer.Player1, PieceGenerator.generate()),new Position(5,12));
+        addPiece(new Piece(EPlayer.Player1, PieceGenerator.generate()),new Position(2,14));
+        addPiece(new Piece(EPlayer.Player1, PieceGenerator.generate()),new Position(13,14));
+        addPiece(new Piece(EPlayer.Player1, PieceGenerator.generate()),new Position(10,10));
+
+    }
+
+
+    /**
+     * Compute possible moves of all pieces.
+     */
+    public void computePossibleMoves(){
+        for(int i =0;i< board.length;i++){
+            for(int j =0;j< board[0].length;j++){
+                Position pos = new Position(i,j);
+                Piece piece = pieceAt(pos);
+                if(piece!=null){
+                    PieceType type = piece.getPieceType();
+                    piece.setPossibleMoves(type.computePossibleMoves(this,pos));
+                }
+            }
+        }
+    }
+
+    public void perform(Position fromPos, Position toPos){
+        Piece piece = pieceAt(fromPos);
+        piece.getPieceType().perform(this,fromPos,toPos);
+    }
+
+
+    public void takePiece(Position pos){
+        Piece p = board[pos.getX()][pos.getY()];
+        if(p.equals(king1)){
+            winner = king1.getOwner();
+        } else if(p.equals(king2)){
+            winner = king2.getOwner();
+        }
+        graveyard.add(p);
+
+        board[pos.getX()][pos.getY()] = null;
     }
 
     public void removePiece(Position pos){
         Piece p = board[pos.getX()][pos.getY()];
-
-        p.getOwner().addToGraveyard(p);
         board[pos.getX()][pos.getY()] = null;
     }
 
     public void addPiece(Piece piece,Position pos){
-        board[pos.getX()][pos.getY()] = piece;
-        piece.setPos(pos);
+        board[pos.getY()][pos.getX()] = piece;
     }
 
     public String drawBoard(){
         String str = "";
         for(int j=0;j<board[0].length+2;j++){
-            str+="-";
+            str+=" - ";
         }
         str+="\n";
         for(int i=0;i<board.length;i++){
             str+="|";
             for(int j=0;j<board[0].length;j++){
-                str+=symbolAt(new Position(i,j));
+                str+=symbolAt(new Position(j,i));
             }
             str+="|\n";
         }
         for(int j=0;j<board[0].length+2;j++){
-            str+="-";
+            str+=" - ";
         }
         return str;
     }
 
 
     public Piece pieceAt(Position p){
-        return board[p.getX()][p.getY()];
+        if(p.getX()<0 || p.getX()>=width || p.getY()<0 || p.getY()>=height){
+            return null;
+        }
+        return board[p.getY()][p.getX()];
     }
 
-    public char symbolAt(Position p){
+    public String symbolAt(Position p){
         if(pieceAt(p)!=null){
-            return pieceAt(p).getSymbol();
+            return " " +pieceAt(p).getSymbol() + " ";
         }
-        return ' ';
+        return " - ";
     }
     public int getWidth() {
         return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
     }
 
     public int getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     public boolean isOnboard(Position pos){
         int x = pos.getX();
         int y = pos.getY();
         return x>=0 && x<width && y>=0 && y<height;
+    }
+
+    public boolean areEnemys(Piece p1,Piece p2){
+        if(p1==null || p2==null){
+            return false;
+        }
+        return p1.getOwner().equals(p2.getOwner());
+    }
+
+    public Piece[][] getBoard() {
+        return board;
+    }
+
+    public EPlayer getWinner() {
+        return winner;
+    }
+
+    public Piece getKing1() {
+        return king1;
+    }
+
+    public void setKing1(Piece king1) {
+        this.king1 = king1;
+    }
+
+    public Piece getKing2() {
+        return king2;
+    }
+
+    public void setKing2(Piece king2) {
+        this.king2 = king2;
+    }
+
+    public ArrayList<Piece> getGraveyard() {
+        return graveyard;
     }
 }
