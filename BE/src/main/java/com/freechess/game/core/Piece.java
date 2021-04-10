@@ -78,4 +78,13 @@ public class Piece {
     public void setPossibleMoves(ArrayList<Position> possibleMoves) {
         this.possibleMoves = possibleMoves;
     }
+
+    public boolean canMoveTo(Position posTo ){
+        for (int i = 0; i < possibleMoves.size(); i++) {
+            if(possibleMoves.get(i).getX()==posTo.getX() && possibleMoves.get(i).getY()==posTo.getY()){
+                return true;
+            }
+        }
+        return false;
+    }
 }

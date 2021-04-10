@@ -38,7 +38,7 @@ public class JumpingPieceType extends ClassicPieceType {
     public ArrayList<Position> computePossibleMoves(Board board, Position pos) {
 
         Piece piece1 = board.pieceAt(pos);
-        boolean topDown = piece1.getOwner()!= EPlayer.Player2;
+        boolean topDown = piece1.getOwner()!= EPlayer.P2;
         ArrayList<Position> possibleMoves= new ArrayList<>();
 
         for (Position p : moves.keySet()) {

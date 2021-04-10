@@ -1,8 +1,5 @@
 package com.freechess.game.core;
 
-import com.freechess.game.pieces.generators.PieceGenerator;
-
-import java.util.Map;
 import java.util.UUID;
 
 public class Game {
@@ -14,16 +11,17 @@ public class Game {
     private Player player2;
 
     private int round = 0;
-    private Player playersTurn;
+    private EPlayer playersTurn;
 
 
     public Game(){
         gameId = UUID.randomUUID();
-        board = new Board(30,30);
+        BoardGenerator gen = new BoardGenerator();
+        board = gen.generate();
         if(Math.random()>=0.5){
-            playersTurn=player1;
+            playersTurn=EPlayer.P1;
         } else {
-            playersTurn = player2;
+            playersTurn = EPlayer.P2;
         }
     }
 
@@ -43,12 +41,10 @@ public class Game {
 
     public void play(Position fromPos, Position toPos){
         Piece piece = board.pieceAt(fromPos);
-
         // is it this players turn?
         if(piece.getOwner().equals(playersTurn)){
-
             // is it possible move??
-            if(piece.getPossibleMoves().contains(toPos)){
+            if(piece.canMoveTo(toPos)){
                 board.perform(fromPos,toPos);
             }
         }
@@ -63,10 +59,10 @@ public class Game {
         }
 
 
-        if(playersTurn.equals(player1)){
-            playersTurn=player2;
+        if(playersTurn.equals(EPlayer.P1)){
+            playersTurn=EPlayer.P2;
         } else {
-            playersTurn=player1;
+            playersTurn=EPlayer.P1;
         }
         board.computePossibleMoves();
         round++;
@@ -91,5 +87,13 @@ public class Game {
 
     public Board getBoard() {
         return board;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public EPlayer getPlayersTurn() {
+        return playersTurn;
     }
 }

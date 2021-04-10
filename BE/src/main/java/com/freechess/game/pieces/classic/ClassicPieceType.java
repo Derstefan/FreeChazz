@@ -31,6 +31,7 @@ public abstract class ClassicPieceType extends PieceType {
             }
         }
         board.removePiece(fromPos);
+
         board.addPiece(piece,toPos);
     }
 

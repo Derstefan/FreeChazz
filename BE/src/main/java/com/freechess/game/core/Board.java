@@ -1,7 +1,7 @@
 package com.freechess.game.core;
 
 import com.freechess.game.pieces.PieceType;
-import com.freechess.game.pieces.generators.PieceGenerator;
+import com.freechess.game.pieces.generators.PieceTypeGenerator;
 
 import java.util.ArrayList;
 
@@ -24,27 +24,10 @@ public class Board {
         this.width = width;
         this.height = height;
         board = new Piece[height][width];
-        init();
-        computePossibleMoves();
-        System.out.println(drawBoard());
+
+        //System.out.println(drawBoard());
     }
 
-    private void init(){
-        king1 = new Piece(EPlayer.Player1, PieceGenerator.generate());
-        king2 = new Piece(EPlayer.Player2, PieceGenerator.generate());
-        addPiece(king1,new Position(1,3));
-        addPiece(king2,new Position(4,2));
-        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(0,0));
-        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(5,2));
-        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(2,4));
-        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(13,4));
-        addPiece(new Piece(EPlayer.Player2, PieceGenerator.generate()),new Position(10,2));
-        addPiece(new Piece(EPlayer.Player1, PieceGenerator.generate()),new Position(5,12));
-        addPiece(new Piece(EPlayer.Player1, PieceGenerator.generate()),new Position(2,14));
-        addPiece(new Piece(EPlayer.Player1, PieceGenerator.generate()),new Position(13,14));
-        addPiece(new Piece(EPlayer.Player1, PieceGenerator.generate()),new Position(10,10));
-
-    }
 
 
     /**
@@ -78,19 +61,19 @@ public class Board {
         }
         graveyard.add(p);
 
-        board[pos.getX()][pos.getY()] = null;
+        board[pos.getY()][pos.getX()] = null;
     }
 
     public void removePiece(Position pos){
         Piece p = board[pos.getX()][pos.getY()];
-        board[pos.getX()][pos.getY()] = null;
+        board[pos.getY()][pos.getX()] = null;
     }
 
     public void addPiece(Piece piece,Position pos){
         board[pos.getY()][pos.getX()] = piece;
     }
 
-    public String drawBoard(){
+    public String drawBoardd(){
         String str = "";
         for(int j=0;j<board[0].length+2;j++){
             str+=" - ";
@@ -171,4 +154,7 @@ public class Board {
     public ArrayList<Piece> getGraveyard() {
         return graveyard;
     }
+
+
+
 }

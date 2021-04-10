@@ -28,7 +28,7 @@ public class GameController {
     @GetMapping("newgame/{name}")
     public ResponseEntity<JwtResponse> newGame(@PathVariable String name){
         Game game = server.createGame();
-        Player player1 = new Player(name, EPlayer.Player1);
+        Player player1 = new Player(name, EPlayer.P1);
         game.join(player1);
 
         UUID playerId = player1.getPlayerId();
@@ -36,7 +36,7 @@ public class GameController {
 
         //generate Security Token
         String jwt = jwtUtils.generateJwtToken(playerId,gameId);
-        JwtResponse jwtResponse = new JwtResponse(gameId,playerId,jwt,EPlayer.Player1);
+        JwtResponse jwtResponse = new JwtResponse(gameId,playerId,jwt,EPlayer.P1);
 
         return ResponseEntity.ok(jwtResponse);
     }
@@ -45,7 +45,7 @@ public class GameController {
     public ResponseEntity<JwtResponse> joinGame(@PathVariable UUID gameId,@PathVariable String name){
         Game game = server.getGameById(gameId);
         if(game!=null){
-            Player player2 = new Player(name, EPlayer.Player2);
+            Player player2 = new Player(name, EPlayer.P2);
             boolean joined = game.join(player2);
             if(!joined){
                 //already 2 player in this game
@@ -54,7 +54,7 @@ public class GameController {
 
             UUID playerId = player2.getPlayerId();
             String jwt = jwtUtils.generateJwtToken(playerId,gameId);
-            JwtResponse jwtResponse = new JwtResponse(gameId,playerId,jwt,EPlayer.Player2);
+            JwtResponse jwtResponse = new JwtResponse(gameId,playerId,jwt,EPlayer.P2);
             return ResponseEntity.ok(jwtResponse);
         }
         return ResponseEntity.notFound().build();
@@ -75,11 +75,13 @@ public class GameController {
     @GetMapping("board/{gameId}")
     public ResponseEntity<Board> getBoard(@RequestHeader HttpHeaders headers, @PathVariable UUID gameId){
         if(validate(headers)){
-            Board board = server.getGameById(gameId).getBoard();
-           // System.out.println(server.getGameById(gameId).getGameId());
-            //System.out.println(gameId);
-
-            return ResponseEntity.ok(board);
+            Game game = server.getGameById(gameId);
+            if(game!=null){
+                Board board = game.getBoard();
+                return ResponseEntity.ok(board);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         }
         return ResponseEntity.status(401).body(null);
     }
@@ -87,7 +89,7 @@ public class GameController {
 
     // play gameid
     @PostMapping("play/{gameId}")
-    public ResponseEntity<String> play(@RequestHeader HttpHeaders headers, @PathVariable UUID gameId, Draw draw){
+    public ResponseEntity<String> play(@RequestHeader HttpHeaders headers, @PathVariable UUID gameId,@RequestBody Draw draw){
         if(validate(headers)) {
             Game game= server.getGameById(gameId);
             game.play(draw.getFromPos(), draw.getToPos());

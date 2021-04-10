@@ -24,7 +24,7 @@ class HeaderComponent extends Component {
             <div>
                 <header>
                     <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-                    <div ><a className="navbar-brand text-muted">FreeChess App</a> <small>Number of Games:{gameNumber}</small></div>
+                    <div ><a className="navbar-brand text-muted">FreeChazz App</a> <small>Number of Games:{gameNumber}</small></div>
                     </nav>
                 </header>
             </div>

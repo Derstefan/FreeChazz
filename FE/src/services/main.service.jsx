@@ -23,7 +23,7 @@ class MainService {
     }
 
     play(gameId,draw){
-        return axios.post(MAIN_API_BASE_URL + "/board/" + gameId,draw,{headers: this.authHeader()})
+        return axios.post(MAIN_API_BASE_URL + "/play/" + gameId,draw,{headers: this.authHeader()})
     }
 
     authHeader(){

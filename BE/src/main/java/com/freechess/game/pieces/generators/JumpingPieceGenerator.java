@@ -30,33 +30,10 @@ public class JumpingPieceGenerator {
     public JumpingPieceGenerator(long seed){
         this.seed=seed;
         rand = new Random(seed);
-       // start();
 
 
     }
 
-
-
-    private void start(){
-       //check wsks
-        System.out.println(sum(DISTANCE_WSKS));
-        System.out.println(sum(CIRCLES_WSKS));
-
-        char[][] moves = new char[2*MAX_DISTANCE+1][2*MAX_DISTANCE+1];
-        for(int i=0;i<moves.length;i++){
-            for(int  j=0;j<moves.length;j++){
-                moves[i][j] = '-';
-                if(i==MAX_DISTANCE && j==MAX_DISTANCE){
-                    moves[i][j]='P';
-                }
-            }
-        }
-        HashMap<Position,EMoveType> map = generateMoves();
-        for(Position pos: map.keySet()){
-            moves[pos.getX()+MAX_DISTANCE][pos.getY()+MAX_DISTANCE] = map.get(pos).name().charAt(0);
-        }
-        showMoves(moves);
-    }
 
     public JumpingPieceType generate(){
         JumpingPieceType piece = new JumpingPieceType();
@@ -73,7 +50,7 @@ public class JumpingPieceGenerator {
         for(Position pos: map.keySet()){
             moves[pos.getX()+MAX_DISTANCE][pos.getY()+MAX_DISTANCE] = map.get(pos).name().charAt(0);
         }
-        showMoves(moves);
+        //showMoves(moves);
 
         piece.setMoves(map);
         return piece;
@@ -83,7 +60,7 @@ public class JumpingPieceGenerator {
         HashMap<Position, EMoveType> moveList= new HashMap<>();
 
         int circleNumber = dice(CIRCLES_WSKS);
-        System.out.println("circleNumber: " + circleNumber);
+  //      System.out.println("circleNumber: " + circleNumber);
         for(int i=0;i<circleNumber;i++){
             int x = dice(DISTANCE_WSKS);
             int y = dice(DISTANCE_WSKS);
@@ -200,5 +177,27 @@ public class JumpingPieceGenerator {
 
     public static void main(String[] args){
         JumpingPieceGenerator gen = new JumpingPieceGenerator((long)(Math.random()*128392173));
+    }
+
+
+    private void start(){
+        //check wsks
+        // System.out.println(sum(DISTANCE_WSKS));
+        // System.out.println(sum(CIRCLES_WSKS));
+
+        char[][] moves = new char[2*MAX_DISTANCE+1][2*MAX_DISTANCE+1];
+        for(int i=0;i<moves.length;i++){
+            for(int  j=0;j<moves.length;j++){
+                moves[i][j] = '-';
+                if(i==MAX_DISTANCE && j==MAX_DISTANCE){
+                    moves[i][j]='P';
+                }
+            }
+        }
+        HashMap<Position,EMoveType> map = generateMoves();
+        for(Position pos: map.keySet()){
+            moves[pos.getX()+MAX_DISTANCE][pos.getY()+MAX_DISTANCE] = map.get(pos).name().charAt(0);
+        }
+        //showMoves(moves);
     }
 }
