@@ -19,6 +19,7 @@ public class Piece {
     public Piece(EPlayer owner, PieceType pieceType){
         this.owner = owner;
         this.pieceType = pieceType;
+        this.symbol = pieceType.getSymbol();
     }
 
     public void addPossibleMove(Position move){
@@ -28,27 +29,6 @@ public class Piece {
     public void clearPossibleMoves(){
         possibleMoves.clear();;
     }
-
-/*    public boolean isEnemyAt(Position pos) {
-        if(board.pieceAt(pos)!=null){
-            return !board.pieceAt(pos).getOwner().equals(this.getOwner());
-        }
-        return false;
-    }
-
-    public boolean isFriendAt(Position pos) {
-        if(board.pieceAt(pos)!=null){
-            return board.pieceAt(pos).getOwner().equals(this.getOwner());
-        }
-        return false;
-    }
-
-    public boolean isEmptyAt(Position pos){
-        return !isEnemyAt(pos) && !isFriendAt(pos);
-    }*/
-
-
-
 
     public EPlayer getOwner(){
         return owner;

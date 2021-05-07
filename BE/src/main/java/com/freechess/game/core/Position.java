@@ -1,5 +1,7 @@
 package com.freechess.game.core;
 
+import java.util.ArrayList;
+
 public class Position {
 
     private int x;
@@ -28,5 +30,14 @@ public class Position {
 
     public Position add(int dx,int dy){
         return new Position(x+dx,y+dy);
+    }
+
+    public boolean memberOf(ArrayList<Position> positions){
+        for (int i = 0; i < positions.size (); i++) {
+            if(positions.get(i).getX()==getX() && positions.get(i).getY()==getY()){
+                return true;
+            }
+        }
+        return false;
     }
 }

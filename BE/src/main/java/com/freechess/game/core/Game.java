@@ -58,7 +58,6 @@ public class Game {
             // board.getWinner() winns
         }
 
-
         if(playersTurn.equals(EPlayer.P1)){
             playersTurn=EPlayer.P2;
         } else {

@@ -13,6 +13,7 @@ public class GameData {
     private Player player2;
     private EPlayer turn;
     private int round;
+    private EPlayer winner;
 
     public GameData(Game game) {
         this.gameId = game.getGameId();
@@ -41,5 +42,13 @@ public class GameData {
 
     public int getRound() {
         return round;
+    }
+
+    public EPlayer getWinner() {
+        return winner;
+    }
+
+    public void setWinner(EPlayer winner) {
+        this.winner = winner;
     }
 }
