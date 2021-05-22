@@ -6,7 +6,8 @@ class RandomGenerator extends Component {
     constructor(str) {
         super();
         this.tempSeed = this.hash(str);
-        // console.log("str=", str, "seed=", this.tempSeed);
+
+        //        console.log("str=", str, "seed=", this.tempSeed);
     }
 
     random() {
@@ -30,9 +31,9 @@ class RandomGenerator extends Component {
             hash |= 0; // Convert to 32bit integer
         }
         return hash;
-    };
-
-
+    }
 }
+
+
 
 export default RandomGenerator

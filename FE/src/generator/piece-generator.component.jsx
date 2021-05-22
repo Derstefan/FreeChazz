@@ -88,13 +88,14 @@ class PieceGeneratorComponent extends Component {
 
         // var color = "#" + Math.floor(this.random() * 255).toString(2);
         // 16 777 216
-        console.log(color);
+        // console.log(color);
 
         var points = [];
         for (var i = 0; i < pointNumber; i++) {
             var x = this.randNumOfRange(0, this.width);
             var y = this.randNumOfRange(0, this.height);
             points.push({ x: x, y: y });
+            // console.log("peint added: (", x, ",", y, ")");
         }
 
 
@@ -147,6 +148,8 @@ class PieceGeneratorComponent extends Component {
         canvas2.width = width;
         canvas2.height = height;
         var context2 = canvas2.getContext('2d');
+        // console.log("Piece: ", seedstr);
+
         this.drawPolygonCanvas(context2);
         this.drawPolygonCanvas(context2);
         this.drawPolygonCanvas(context2);

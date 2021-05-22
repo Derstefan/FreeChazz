@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import Canvas from '../game/canvas.component';
 import PieceGenerator from '../generator/piece-generator';
-import RandomGenerator from '../generator/random-generator';
-import UtilFunctions from '../generator/random-generator';
 
 class PieceComponent extends Component {
 
@@ -14,7 +12,6 @@ class PieceComponent extends Component {
             height: 400,
             piece: pg.drawPieceCanvas("P1")
         }
-
     }
 
     drawMethod() {

@@ -94,11 +94,11 @@ class PieceGenerator extends Component {
 
     // ----------------------------------------------------------------------------------------------------------------
 
-    drawMirroredPolygon() {
+    drawCurvedMirroredPolygon() {
 
         var pointNumber = this.gen.randNumOfRange(3, 10);
         var points = this.randomPoints(pointNumber);
-        console.log(UtilFunctions.polygonArea(points));
+        //console.log(UtilFunctions.polygonArea(points));
         var color = this.randomColor();
 
         this.c2.fillStyle = color;
@@ -107,7 +107,20 @@ class PieceGenerator extends Component {
         this.c2.fill(this.drawCurvedMirrorShape(points));
     }
 
-    drawMirroredPolygonColorDiff() {
+    drawMirroredPolygon() {
+
+        var pointNumber = this.gen.randNumOfRange(3, 10);
+        var points = this.randomPoints(pointNumber);
+        //console.log(UtilFunctions.polygonArea(points));
+        var color = this.randomColor();
+
+        this.c2.fillStyle = color;
+        this.c2.fill(this.drawShape(points));
+        this.c2.fillStyle = color;
+        this.c2.fill(this.drawMirrorShape(points));
+    }
+
+    drawCurvedMirroredPolygonColorDiff() {
 
         var pointNumber = this.gen.randNumOfRange(3, 10);
         var points = this.randomPoints(pointNumber);
@@ -120,6 +133,19 @@ class PieceGenerator extends Component {
         this.c2.fill(this.drawCurvedMirrorShape(points));
     }
 
+    drawMirroredPolygonColorDiff() {
+
+        var pointNumber = this.gen.randNumOfRange(3, 10);
+        var points = this.randomPoints(pointNumber);
+        var color = this.randomColor();
+        var color2 = this.randomColor();
+
+        this.c2.fillStyle = color;
+        this.c2.fill(this.drawShape(points));
+        this.c2.fillStyle = color2;
+        this.c2.fill(this.drawMirrorShape(points));
+    }
+
 
     drawPolygons(num) {
         return [...Array(num).keys()].map(() => this.gen.random() > 0.1 ? this.drawMirroredPolygon() : this.drawMirroredPolygonColorDiff());
@@ -129,14 +155,14 @@ class PieceGenerator extends Component {
 
     drawPieceCanvas(owner) {
 
-        this.drawPolygons(this.gen.randNumOfRange(3, 3));
-        // this.drawMirroredPolygon();
-        // this.drawMirroredPolygonColorDiff();
-        // this.drawMirroredPolygon();
-        // this.drawMirroredPolygon();
-        // this.drawMirroredPolygonColorDiff();
-        // this.drawMirroredPolygon();
-        // this.drawMirroredPolygon();
+        //this.drawPolygons(this.gen.randNumOfRange(3, 4));
+        this.drawMirroredPolygon();
+        this.drawMirroredPolygonColorDiff();
+        this.drawMirroredPolygon();
+        this.drawMirroredPolygon();
+        this.drawMirroredPolygonColorDiff();
+        this.drawMirroredPolygon();
+        this.drawMirroredPolygon();
 
         return (
             this.canvas2

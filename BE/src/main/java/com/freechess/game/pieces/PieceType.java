@@ -1,8 +1,7 @@
 package com.freechess.game.pieces;
 
-import com.freechess.game.core.Board;
-import com.freechess.game.core.Piece;
-import com.freechess.game.core.Position;
+import com.freechess.game.board.Board;
+import com.freechess.game.board.Position;
 
 import java.util.ArrayList;
 

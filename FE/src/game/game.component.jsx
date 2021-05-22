@@ -3,6 +3,10 @@ import mainService from '../services/main.service';
 import Canvas from './canvas.component';
 import PieceComponent from '../components/piece.component';
 import PieceGeneratorComponent from '../generator/piece-generator.component';
+import PieceGenerator from '../generator/piece-generator';
+
+
+
 
 class GameComponent extends Component {
 
@@ -24,7 +28,7 @@ class GameComponent extends Component {
             height: 16,
             turn: "P1",
             round: 0,
-            isInited: false,
+
 
             //selection
             selectedField: {},
@@ -33,29 +37,67 @@ class GameComponent extends Component {
             //pieces
             pieces: {},
 
+            //updater
+            loadTimer: undefined,
+            isInited: false,
 
 
             //consts
-            squareSize: 60,
+            squareSize: 45,
             boardTopx: 30,
             boardTopy: 30,
-            updateInterval: 1500
+            updateInterval: 2000
         }
-        this.updateGameData();
-        this.loadBoard();
         this.selectField = this.selectField.bind(this);
         this.clickOnCanvas = this.clickOnCanvas.bind(this);
         this.drawMethod = this.drawMethod.bind(this);
         this.play = this.play.bind(this);
+        this.loadBoard = this.loadBoard.bind(this);
+        this.loadPieceData = this.loadPieceData.bind(this);
 
-        const loadTimer = setInterval(() => {
-            this.updateGameData();
-        }, this.state.updateInterval);
     }
 
     componentDidMount() {
+        const { isInited } = this.state;
+        this.updateGameData();
 
+        if (!isInited) {
+            this.loadBoard(true);
+        }
+        const loadTimer = setInterval(() => {
+            this.updateGameData();
+
+        }, this.state.updateInterval);
     }
+
+    loadPieceData(bv) {
+        const { squareSize } = this.state;
+
+        // console.log("is inside", inited);
+        var pieces = new Map();
+
+        // fill pieces canvas buffer
+        for (let i = 0; i < bv.length; i++) {
+            for (let j = 0; j < bv[0].length; j++) {
+                // TODO: P1 und P2 unterscheidung?
+                console.log(bv[i][j].symbol);
+
+                if (bv[i][j].symbol !== "" && pieces.get(bv[i][j].symbol) === undefined) {
+
+                    var pg = new PieceGenerator(squareSize * 0.8, squareSize * 0.95, bv[i][j].symbol);//TODO: owner!!!
+                    pieces.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner));
+                    // pieces[bv[i][j].symbol] = PieceGeneratorComponent.drawPieceCanvas(squareSize * 0.8, squareSize * 0.95, bv[i][j].symbol, bv[i][j].owner);
+
+                }
+            }
+        }
+        //        console.log(str);
+        //        console.log(pieces);
+        //console.log("size", pieces);
+        this.setState({ pieces: pieces, isInited: true, boardView: bv, width: bv[0].length, height: bv.length });
+    }
+
+
 
     updateGameData() {
         const { gameId, turn } = this.state;
@@ -65,7 +107,7 @@ class GameComponent extends Component {
             //when other player made his turn
             if (turn !== res.data.turn) {
 
-                this.loadBoard();
+                this.loadBoard(false);
             }
 
             //check game end ?
@@ -74,11 +116,11 @@ class GameComponent extends Component {
 
 
 
-    loadBoard() {
-        const { gameId, isInited, squareSize } = this.state;
+    loadBoard(init) {
+        const { gameId, squareSize } = this.state;
         mainService.getBoard(gameId).then((res) => {
             let bv = res.data.board;
-            //console.log(bv);
+            console.log(bv);
             for (let i = 0; i < bv.length; i++) {
                 for (let j = 0; j < bv[0].length; j++) {
                     if (res.data.board[i][j] === null) {
@@ -96,21 +138,11 @@ class GameComponent extends Component {
                     }
                 }
             }
-            if (!isInited) {
-                var pieces = [];
-                // fill pieces canvas buffer
-                for (let i = 0; i < bv.length; i++) {
-                    for (let j = 0; j < bv[0].length; j++) {
-                        if (bv[i][j].symbol !== "" && pieces[bv[i][j].symbol] === undefined) {
-                            pieces[bv[i][j].symbol] = PieceGeneratorComponent.drawPieceCanvas(squareSize * 0.8, squareSize * 0.95, bv[i][j].symbol, bv[i][j].owner);
-                        }
-                    }
-                }
-                //console.log("size", pieces);
-                this.setState({ pieces: pieces, isInited: true, boardData: res.data, boardView: bv, width: bv[0].length, height: bv.length });
+            if (init) {
+                this.loadPieceData(bv);
+            } else {
+                this.setState({ boardData: res.data, boardView: bv, width: bv[0].length, height: bv.length });
             }
-            this.setState({ boardData: res.data, boardView: bv, width: bv[0].length, height: bv.length });
-
         });
     }
 
@@ -190,11 +222,10 @@ class GameComponent extends Component {
     }
 
     drawMethod() {
-        const { width, height, squareSize, boardView, possibleMoves, boardTopy, boardTopx, selectedField, me, pieces } = this.state;
+        const { width, height, squareSize, boardView, possibleMoves, boardTopy, boardTopx, selectedField, me, pieces, isInited } = this.state;
 
 
         const draw = (ctx, frameCount) => {
-
             if (boardView) {
 
                 ctx.canvas.width = squareSize * (width + 1)
@@ -227,7 +258,7 @@ class GameComponent extends Component {
                 }
 
                 // draw pieces
-                if (boardView[0]) {
+                if (boardView[0] && isInited) {
                     ctx.fillStyle = "black";
                     ctx.font = "20px Arial";
                     for (let i = 0; i < width; i++) {
@@ -238,7 +269,8 @@ class GameComponent extends Component {
                                 let yOffset = boardTopy + (j + 0.05) * squareSize;
                                 if (pieces.length !== 0) {
                                     //  console.log(pieces);
-                                    ctx.drawImage(pieces[boardView[j][i].symbol], xOffset, yOffset);
+
+                                    ctx.drawImage(pieces.get(boardView[j][i].symbol), xOffset, yOffset);
                                 }
                                 //}
 
@@ -255,6 +287,7 @@ class GameComponent extends Component {
             }
         }
         return draw;
+
     }
 
     drawPiece(pieceCode, player) {
@@ -276,7 +309,7 @@ class GameComponent extends Component {
 
 
     render() {
-        const { inviteLink, player1, player2, boardView, selectedField, turn, me, round } = this.state;
+        const { inviteLink, player1, player2, boardView, selectedField, turn, me, round, isInited } = this.state;
         var piece = "";
         if (boardView[0] && selectedField.x) {
             piece = boardView[selectedField.y][selectedField.x];
@@ -285,24 +318,27 @@ class GameComponent extends Component {
 
 
         // TODO: aufteilen in GameData und PieceData ?
-        return (
+        if (isInited) {
+            return (
 
-            <div>
-                {/* <img id="scream" width="220" height="277" src="https://filesamples.com/samples/image/svg/sample_640%C3%97426.svg" alt="The Scream"></img> */}
-
-
-                <div>            {this.drawGameText()}</div>
-                <Canvas draw={this.drawMethod()} onClick={this.clickOnCanvas} />
-                {/* <div>{piece.symbol} {" "}{piece.owner}</div>*/}
                 <div>
-                    {inviteLink}
-                </div>
-                <div>
-                    Player1: {player1 && player1.name} {player2 && <>Player2: {player2.name}</>} {" round:"}{round}
-                </div>
+                    {/* <img id="scream" width="220" height="277" src="https://filesamples.com/samples/image/svg/sample_640%C3%97426.svg" alt="The Scream"></img> */}
 
-            </div >
-        )
+
+                    <div>            {this.drawGameText()}</div>
+                    <Canvas draw={this.drawMethod()} onClick={this.clickOnCanvas} />
+                    {/* <div>{piece.symbol} {" "}{piece.owner}</div>*/}
+                    <div>
+                        {inviteLink}
+                    </div>
+                    <div>
+                        Player1: {player1 && player1.name} {player2 && <>Player2: {player2.name}</>} {" round:"}{round}
+                    </div>
+
+                </div >
+            )
+        }
+        return "";
     }
 }
 

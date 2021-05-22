@@ -6,34 +6,40 @@ class MainService {
 
 
 
-    startNewGame(name){
+    startNewGame(name) {
         return axios.get(MAIN_API_BASE_URL + "/newgame/" + name)
     }
 
-    joinGame(gameId,name){
+    joinGame(gameId, name) {
         return axios.get(MAIN_API_BASE_URL + "/joingame/" + gameId + "/" + name)
     }
 
-    getGameData(gameId){
-        return axios.get(MAIN_API_BASE_URL + "/gamedata/" + gameId,{headers: this.authHeader()})
+    getGameData(gameId) {
+        return axios.get(MAIN_API_BASE_URL + "/gamedata/" + gameId, { headers: this.authHeader() })
     }
 
-    getBoard(gameId){
-        return axios.get(MAIN_API_BASE_URL + "/board/" + gameId,{headers: this.authHeader()})
+    getBoard(gameId) {
+        return axios.get(MAIN_API_BASE_URL + "/board/" + gameId, { headers: this.authHeader() })
     }
 
-    play(gameId,draw){
-        return axios.post(MAIN_API_BASE_URL + "/play/" + gameId,draw,{headers: this.authHeader()})
+    play(gameId, draw) {
+        return axios.post(MAIN_API_BASE_URL + "/play/" + gameId, draw, { headers: this.authHeader() })
     }
 
-    authHeader(){
+    pieceData(pieceId) {
+        return axios.get(MAIN_API_BASE_URL + "/piece/" + pieceId);
+    }
+
+    authHeader() {
         const user = JSON.parse(localStorage.getItem("auth"));
 
-        if(user && user.accessToken){
-            return {Authorization: "Bearer " +user.accessToken};
+        if (user && user.accessToken) {
+            return { Authorization: "Bearer " + user.accessToken };
         }
         return {};
     }
+
+
 }
 
 export default new MainService()
