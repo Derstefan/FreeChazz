@@ -54,8 +54,8 @@ public class ActionMap {
 
     //zur serialisierung gleich ein array
     public String[][] getActions(){
-        int w = 10;
-        int h = 10;
+        int w = 7;
+        int h = 7;
 
         String[][] moves = new String[2*w+1][2*h+1];
         for (int i = 0; i < moves.length; i++) {

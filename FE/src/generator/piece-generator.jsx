@@ -155,14 +155,14 @@ class PieceGenerator extends Component {
 
     drawPieceCanvas(owner) {
 
-        //this.drawPolygons(this.gen.randNumOfRange(3, 4));
-        this.drawMirroredPolygon();
-        this.drawMirroredPolygonColorDiff();
-        this.drawMirroredPolygon();
-        this.drawMirroredPolygon();
-        this.drawMirroredPolygonColorDiff();
-        this.drawMirroredPolygon();
-        this.drawMirroredPolygon();
+        this.drawPolygons(this.gen.randNumOfRange(3, 5));
+        // this.drawMirroredPolygon();
+        // this.drawMirroredPolygonColorDiff();
+        // this.drawMirroredPolygon();
+        // //this.drawMirroredPolygon();
+        // //        this.drawMirroredPolygonColorDiff();
+        // //this.drawMirroredPolygon();
+        // this.drawMirroredPolygon();
 
         return (
             this.canvas2

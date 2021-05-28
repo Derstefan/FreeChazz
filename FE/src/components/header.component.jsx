@@ -20,7 +20,6 @@ class HeaderComponent extends Component {
     }
 
     goHome() {
-
         this.props.history.push('/')
     }
 

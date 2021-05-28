@@ -2,7 +2,7 @@ package com.freechess.game.board;
 
 import java.util.ArrayList;
 
-public class Position {
+public class Position implements Comparable<Position> {
 
     private int x;
     private int y;
@@ -42,15 +42,33 @@ public class Position {
     }
 
 
-    public boolean equals(Position pos){
-        return pos.getX()==this.getX() && pos.getY()==this.getY();
+    public boolean equals(Position pos) {
+        return pos.getX() == this.getX() && pos.getY() == this.getY();
     }
 
-    public Position minus(Position pos){
-        return new Position(this.getX()-pos.getX(),this.getY()-pos.getY());
+    public Position minus(Position pos) {
+        return new Position(this.getX() - pos.getX(), this.getY() - pos.getY());
     }
 
     public String toString() {
-        return "(x=" + x + ",y=" + y+")";
+        return "(x=" + x + ",y=" + y + ")";
+    }
+
+    @Override
+    public int compareTo(Position position) {
+        if (getX() < position.getX()) {
+            return -1;
+        }
+        if (getX() > position.getX()) {
+            return 1;
+        }
+        // x_1=x_2
+        if (getY() < position.getY()) {
+            return -1;
+        }
+        if (getY() > position.getY()) {
+            return 1;
+        }
+        return 0;
     }
 }

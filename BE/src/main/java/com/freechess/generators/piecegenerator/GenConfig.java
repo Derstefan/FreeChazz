@@ -31,11 +31,23 @@ public class GenConfig {
         addPositionWskAtY(1,Arrays.asList(0.2, 0.2, 0.07));
         addPositionWskAtY(0,Arrays.asList(0.0, 0.2, 0.1));*/
 
-        addPositionWskAtY(4, Arrays.asList(0.2, 0.17, 0.06, 0.1, 0.1));
-        addPositionWskAtY(3, Arrays.asList(0.2, 0.17, 0.06, 0.1, 0.1));
-        addPositionWskAtY(2, Arrays.asList(0.2, 0.17, 0.06, 0.1, 0.1));
-        addPositionWskAtY(1, Arrays.asList(0.05, 0.1, 0.17, 0.1, 0.1));
-        addPositionWskAtY(0, Arrays.asList(0.0, 0.05, 0.2, 0.1, 0.1));
+        /*
+        3 |- - - -
+        2 |- - x -
+        1 |- - - -
+        0 |- x x -
+          ----------
+           0 1 2 3
+         */
+
+
+
+
+        addPositionWskAtY(4, Arrays.asList(0.04, 0.04, 0.04, 0.04, 0.04));
+        addPositionWskAtY(3, Arrays.asList(0.04, 0.04, 0.04, 0.04, 0.04));
+        addPositionWskAtY(2, Arrays.asList(0.04, 0.04, 0.05, 0.04, 0.04));
+        addPositionWskAtY(1, Arrays.asList(0.05, 0.05, 0.04, 0.04, 0.04));
+        addPositionWskAtY(0, Arrays.asList(0.0, 0.05, 0.04, 0.04, 0.04));
     }
 
     public void setLvl(int lvl) {

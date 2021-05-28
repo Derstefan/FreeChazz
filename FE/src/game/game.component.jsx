@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import mainService from '../services/main.service';
 import Canvas from './canvas.component';
-import PieceComponent from '../components/piece.component';
+import PieceComponent from '../generator/piece.component';
 import PieceGeneratorComponent from '../generator/piece-generator.component';
 import PieceGenerator from '../generator/piece-generator';
+import PieceCardComponent from '../components/piece-card.component';
 
 
 
@@ -33,9 +34,10 @@ class GameComponent extends Component {
             //selection
             selectedField: {},
             possibleMoves: [],
+            pieceId: "",
 
             //pieces
-            pieces: {},
+            pieces: {}, // images of pieces
 
             //updater
             loadTimer: undefined,
@@ -72,28 +74,17 @@ class GameComponent extends Component {
 
     loadPieceData(bv) {
         const { squareSize } = this.state;
-
-        // console.log("is inside", inited);
         var pieces = new Map();
-
-        // fill pieces canvas buffer
         for (let i = 0; i < bv.length; i++) {
             for (let j = 0; j < bv[0].length; j++) {
-                // TODO: P1 und P2 unterscheidung?
-                console.log(bv[i][j].symbol);
-
                 if (bv[i][j].symbol !== "" && pieces.get(bv[i][j].symbol) === undefined) {
-
-                    var pg = new PieceGenerator(squareSize * 0.8, squareSize * 0.95, bv[i][j].symbol);//TODO: owner!!!
+                    var pg = new PieceGenerator(squareSize * 0.8, squareSize * 0.95, bv[i][j].symbol);
                     pieces.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner));
-                    // pieces[bv[i][j].symbol] = PieceGeneratorComponent.drawPieceCanvas(squareSize * 0.8, squareSize * 0.95, bv[i][j].symbol, bv[i][j].owner);
 
                 }
             }
         }
-        //        console.log(str);
-        //        console.log(pieces);
-        //console.log("size", pieces);
+
         this.setState({ pieces: pieces, isInited: true, boardView: bv, width: bv[0].length, height: bv.length });
     }
 
@@ -163,7 +154,8 @@ class GameComponent extends Component {
                 // unselect
                 this.setState({
                     possibleMoves: [],
-                    selectedField: {}
+                    selectedField: {},
+                    pieceId: ""
                 });
             } else if (isOwnSelected && isPossibleMove && isPlayerTurn) {
                 // move
@@ -173,13 +165,15 @@ class GameComponent extends Component {
                 // unselect
                 this.setState({
                     possibleMoves: [],
-                    selectedField: {}
+                    selectedField: {},
+                    pieceId: ""
                 });
             } else {
                 // select new position
                 this.setState({
                     possibleMoves: boardView[y][x].possibleMoves,
-                    selectedField: { x: x, y: y }
+                    selectedField: { x: x, y: y },
+                    pieceId: boardView[y][x].symbol
                 });
             }
         } else {
@@ -187,7 +181,8 @@ class GameComponent extends Component {
                 // select new position
                 this.setState({
                     possibleMoves: boardView[y][x].possibleMoves,
-                    selectedField: { x: x, y: y }
+                    selectedField: { x: x, y: y },
+                    pieceId: boardView[y][x].symbol
                 });
             }
         }
@@ -308,6 +303,10 @@ class GameComponent extends Component {
     }
 
 
+
+
+
+
     render() {
         const { inviteLink, player1, player2, boardView, selectedField, turn, me, round, isInited } = this.state;
         var piece = "";
@@ -316,26 +315,26 @@ class GameComponent extends Component {
             //console.log(piece);
         }
 
-
-        // TODO: aufteilen in GameData und PieceData ?
+        console.log("pieceId (game component) :", this.state.pieceId);
         if (isInited) {
-            return (
+            return (<div>
+                <div>            {this.drawGameText()}</div>
+                <div className="row">
+                    <div class="mb-3 mt-5">       <div className="card">             {this.state.pieceId !== "" && <PieceCardComponent pieceId={this.state.pieceId}></PieceCardComponent>}</div></div>
+                    <div class="mb-5">
 
-                <div>
-                    {/* <img id="scream" width="220" height="277" src="https://filesamples.com/samples/image/svg/sample_640%C3%97426.svg" alt="The Scream"></img> */}
-
-
-                    <div>            {this.drawGameText()}</div>
-                    <Canvas draw={this.drawMethod()} onClick={this.clickOnCanvas} />
-                    {/* <div>{piece.symbol} {" "}{piece.owner}</div>*/}
-                    <div>
-                        {inviteLink}
-                    </div>
-                    <div>
-                        Player1: {player1 && player1.name} {player2 && <>Player2: {player2.name}</>} {" round:"}{round}
+                        <Canvas draw={this.drawMethod()} onClick={this.clickOnCanvas} />
+                        {/* <div>{piece.symbol} {" "}{piece.owner}</div>*/}
+                        <div>
+                            {inviteLink}
+                        </div>
+                        <div>
+                            Player1: {player1 && player1.name} {player2 && <>Player2: {player2.name}</>} {" round:"}{round}
+                        </div>
                     </div>
 
                 </div >
+            </div>
             )
         }
         return "";

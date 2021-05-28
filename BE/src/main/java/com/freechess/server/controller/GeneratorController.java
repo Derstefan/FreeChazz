@@ -16,7 +16,7 @@ public class GeneratorController {
     public ResponseEntity<PieceType> getPiece(@PathVariable long pieceId){
 
         PieceType pieceType = new PieceTypeGenerator().generate(pieceId);
-        //System.out.println(pieceType.getSymbol());
+        System.out.println(pieceId);
         return ResponseEntity.ok(pieceType);
     }
 

@@ -19,6 +19,7 @@ public class DefaultPieceTypeGenerator {
     public DefaultPieceType generate(int lvl,long seed){
         String str = String.valueOf(seed);
         this.lvl = lvl;
+        gc.setLvl(lvl);
         this.seed = Long.valueOf(str);
         rand = new Random(seed);
         return generate();
@@ -27,6 +28,7 @@ public class DefaultPieceTypeGenerator {
     public DefaultPieceType generate(long pieceId){
         String str = String.valueOf(pieceId);
         lvl = Integer.valueOf(str.charAt(0));
+        gc.setLvl(lvl);
         this.seed = Long.valueOf(str.substring(1));
         rand = new Random(seed);
         return generate();
@@ -105,10 +107,12 @@ public class DefaultPieceTypeGenerator {
 
     private Position dicePosition(){
         ArrayList<Position> posList = new ArrayList<>(gc.POSITION_WSK.keySet());
+        Collections.sort(posList);
         double wsk = rand.nextDouble();
+        System.out.println(wsk);
 
         for (int i = 0; i < posList.size(); i++) {
-
+            System.out.print(posList.get(i).toString());
             if (wsk <= gc.POSITION_WSK.get(posList.get(i))) {
                 return posList.get(i);
             }
@@ -124,6 +128,12 @@ public class DefaultPieceTypeGenerator {
         }
         return sum;
     }
+
+/*    private ArrayList<Position> sortPositionSet(Set<Position> posSet){
+        ArrayList<Position> positions = new ArrayList<>(posSet);
+        Collections.sort(positions);
+
+    }*/
 
 
     private void showMoves(char[][] moves) {
@@ -150,7 +160,8 @@ public class DefaultPieceTypeGenerator {
 
     private void addToMap(ActionMap actions, Set<Position> positions, Action action) {
         for (Position pos : positions) {
-          //  System.out.println("generated action");
+            System.out.println(pos.toString());
+
             actions.put(pos, action);
         }
     }
@@ -194,12 +205,11 @@ public class DefaultPieceTypeGenerator {
 
 
     //--------------------------------------------------------
-
-/*    public static void main(String[] args) {
-        DefaultPieceTypeGenerator gen = new DefaultPieceTypeGenerator((long) (Math.random() * 128392173));
-        gen.start();
+/*
+    public static void main(String[] args) {
+Random rand = new Random(123);
+System.out.println(rand.nextDouble());
     }
-
 
     private void start() {
         //check wsks
