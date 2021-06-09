@@ -1,7 +1,5 @@
-import { Component } from 'react'
 
-
-class Config extends Component {
+class UtilFunctions {
 
     // check point is in polygon
     // generate point in polygon
@@ -19,8 +17,6 @@ class Config extends Component {
         var area = 0.0;
 
         for (var i = 0; i < num; i++) {
-            var x = points[i].x;
-            var y = points[i].y;
             area += (points[i].y + points[(i + 1) % num].y) * (points[i].x - points[(i + 1) % num].x);
         }
         return Math.abs(area / 2.0);
@@ -30,4 +26,4 @@ class Config extends Component {
 
 }
 
-export default Config
+export default UtilFunctions

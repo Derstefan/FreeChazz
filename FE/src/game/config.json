@@ -1,0 +1,6 @@
+{
+    "squareSize": 45,
+    "boardTopx": 30,
+    "boardTopy": 30,
+    "updateInterval": 2000
+}

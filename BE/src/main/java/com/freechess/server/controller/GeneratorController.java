@@ -6,7 +6,7 @@ import com.freechess.generators.piecegenerator.PieceTypeGenerator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://192.168.178.136:3000"})
 @RestController
 @RequestMapping("api/")
 public class GeneratorController {
@@ -16,7 +16,6 @@ public class GeneratorController {
     public ResponseEntity<PieceType> getPiece(@PathVariable long pieceId){
 
         PieceType pieceType = new PieceTypeGenerator().generate(pieceId);
-        System.out.println(pieceId);
         return ResponseEntity.ok(pieceType);
     }
 

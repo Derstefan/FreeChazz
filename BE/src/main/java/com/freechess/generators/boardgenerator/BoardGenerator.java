@@ -33,8 +33,8 @@ public class BoardGenerator {
     }
 
 
-    public Board generate() {
-        Board board = new Board(20, 20);
+    public Board generate(int width,int height) {
+        Board board = new Board(width, height);
         init(board);
         board.computePossibleMoves();
         return board;
@@ -67,9 +67,9 @@ public class BoardGenerator {
 
 
 
-        addPiecesToBoard(lvl_1_pieces,randomPositions(board,20,1),true,board);
-        addPiecesToBoard(lvl_2_pieces,randomPositions(board,15,2),true,board);
-        addPiecesToBoard(lvl_3_pieces,randomPositions(board,15,3),true,board);
+        addPiecesToBoard(lvl_1_pieces,randomPositions(board,2,1),true,board);
+        addPiecesToBoard(lvl_2_pieces,randomPositions(board,2,2),true,board);
+        addPiecesToBoard(lvl_3_pieces,randomPositions(board,2,3),true,board);
 
 
     }

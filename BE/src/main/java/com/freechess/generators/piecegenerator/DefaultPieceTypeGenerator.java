@@ -109,10 +109,7 @@ public class DefaultPieceTypeGenerator {
         ArrayList<Position> posList = new ArrayList<>(gc.POSITION_WSK.keySet());
         Collections.sort(posList);
         double wsk = rand.nextDouble();
-        System.out.println(wsk);
-
         for (int i = 0; i < posList.size(); i++) {
-            System.out.print(posList.get(i).toString());
             if (wsk <= gc.POSITION_WSK.get(posList.get(i))) {
                 return posList.get(i);
             }
@@ -160,8 +157,6 @@ public class DefaultPieceTypeGenerator {
 
     private void addToMap(ActionMap actions, Set<Position> positions, Action action) {
         for (Position pos : positions) {
-            System.out.println(pos.toString());
-
             actions.put(pos, action);
         }
     }
