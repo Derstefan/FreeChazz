@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class Action {
 
 
-
+//Act weg und dafür nur Aktion mit optionaler condition ?
 
     private Condition condition;
     private Act act;

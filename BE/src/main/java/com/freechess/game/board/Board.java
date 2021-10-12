@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public class Board {
 
-    private int width = 8;
-    private int height = 8;
+    private int width;
+    private int height;
 
     private Piece king1;
     private Piece king2;
@@ -45,7 +45,6 @@ public class Board {
             return;
         }
         Piece p = pieceAt(pos);
-        if(p==null)System.out.println("blabla2");
         if(p.equals(king1)){
             setWinner(king1.getOwner());
         } else if(p.equals(king2)){
@@ -161,7 +160,17 @@ public class Board {
         return graveyard;
     }
 
-
+    public int countPieces(){
+        int count = 0;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if(board[i][j]!= null){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 
 
     public String toString(){

@@ -2,24 +2,17 @@ package com.freechess.server;
 
 import com.freechess.game.Game;
 import com.freechess.game.player.Player;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+@Component
 public final class Server {
 
-    private static final Server server = new Server();
-    public static Server getInstance() {
-        return server;
-    }
-
-    private final Map<UUID, Game> games;
-
-    private Server() {
-        this.games = new HashMap<>();
-    }
+    private final Map<UUID, Game> games = new HashMap<>();
 
 
     public Game createGame() {

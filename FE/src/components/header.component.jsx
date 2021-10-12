@@ -32,8 +32,10 @@ class HeaderComponent extends Component {
                     <nav className="navbar navbar-expand-md navbar-dark bg-dark">
 
                         <div ><a onClick={() => this.goHome()} className="navbar-brand">FreeChazz</a></div>
-                        <div><a href="https://javaguides.net" className="navbar-brand">new Game</a></div>
-                        <div><a href="https://javaguides.net" className="navbar-brand">Pieces</a></div>
+                        <div><a href="piecesymbol" className="navbar-brand">Piece</a></div>
+                        <div><a href="piecesymbols" className="navbar-brand">Pieces</a></div>
+                        <div><a href="chesspiecesymbol" className="navbar-brand">ChessPiece</a></div>
+                        <div><a href="chesspiecessymbol" className="navbar-brand">ChessPieces</a></div>
                         <small>Number of Games:{gameNumber}</small>
                     </nav>
                 </header>

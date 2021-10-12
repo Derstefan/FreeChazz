@@ -2,7 +2,7 @@ package com.freechess.server.controller;
 
 
 import com.freechess.game.pieces.PieceType;
-import com.freechess.generators.piecegenerator.PieceTypeGenerator;
+import com.freechess.generators.piece.impl.PieceTypeGeneratorPool;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ public class GeneratorController {
     @GetMapping("piece/{pieceId}")
     public ResponseEntity<PieceType> getPiece(@PathVariable long pieceId){
 
-        PieceType pieceType = new PieceTypeGenerator().generate(pieceId);
+        PieceType pieceType = new PieceTypeGeneratorPool().generate(pieceId);
         return ResponseEntity.ok(pieceType);
     }
 

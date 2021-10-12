@@ -1,36 +1,39 @@
 package com.freechess.game;
 
 import com.freechess.game.board.Board;
+import com.freechess.game.draw.Draw;
 import com.freechess.game.pieces.Piece;
 import com.freechess.game.board.Position;
 import com.freechess.game.player.EPlayer;
 import com.freechess.game.player.Player;
-import com.freechess.generators.boardgenerator.BoardGenerator;
+import com.freechess.generators.board.impl.SymmetricBoardGenerator;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
 public class Game {
 
-    private UUID gameId;
 
-    private Board board;
+
+    private final UUID gameId;
+
+    private final Board board;
     private Player player1;
     private Player player2;
 
+    private final ArrayList draws = new ArrayList<Draw>();
     private int round = 0;
+
     private EPlayer playersTurn;
 
 
     public Game(){
         gameId = UUID.randomUUID();
-        BoardGenerator gen = new BoardGenerator();
-        board = gen.generate(10,10);
-        if(Math.random()>=0.5){
-            playersTurn=EPlayer.P1;
-        } else {
-            playersTurn = EPlayer.P2;
-        }
+        SymmetricBoardGenerator gen = new SymmetricBoardGenerator();
+        board = gen.generate();
+        playersTurn = diceStartPlayer();
+
     }
 
 
@@ -83,10 +86,6 @@ public class Game {
         return gameId;
     }
 
-    public void setGameId(UUID gameId) {
-        this.gameId = gameId;
-    }
-
     public Player getPlayer1() {
         return player1;
     }
@@ -119,5 +118,13 @@ public class Game {
             return Optional.of(player2);
         }
 
+    }
+
+    private EPlayer diceStartPlayer(){
+        if(Math.random()>=0.5){
+            return EPlayer.P1;
+        } else {
+            return EPlayer.P2;
+        }
     }
 }

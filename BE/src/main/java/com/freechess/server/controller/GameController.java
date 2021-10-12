@@ -4,7 +4,7 @@ package com.freechess.server.controller;
 import com.freechess.game.player.EPlayer;
 import com.freechess.game.Game;
 import com.freechess.game.player.Player;
-import com.freechess.server.DTO.Draw;
+import com.freechess.server.DTO.DrawData;
 import com.freechess.server.DTO.GameData;
 import com.freechess.game.board.Board;
 import com.freechess.server.DTO.JwtResponse;
@@ -92,7 +92,7 @@ public class GameController {
 
     // play gameid
     @PostMapping("play/{gameId}")
-    public ResponseEntity<String> play(@RequestHeader HttpHeaders headers, @PathVariable UUID gameId,@RequestBody Draw draw){
+    public ResponseEntity<String> play(@RequestHeader HttpHeaders headers, @PathVariable UUID gameId,@RequestBody DrawData draw){
         if(validate(headers)) {
             Game game= server.getGameById(gameId);
             game.play(draw.getFromPos(), draw.getToPos());
