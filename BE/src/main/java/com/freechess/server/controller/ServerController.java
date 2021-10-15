@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://192.168.178.136:3000"})
 @RestController
 @RequestMapping("api/")
 public class ServerController {
@@ -19,7 +19,7 @@ public class ServerController {
     @Autowired
     private Server server;
 
-    // get gameId data
+    // get some data from server TODO: Maybe better metrics
     @GetMapping("serverdata")
     public ResponseEntity<ServerData> getServerData(){
         return ResponseEntity.ok(new ServerData(server));

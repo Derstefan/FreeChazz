@@ -1,54 +1,41 @@
 import React, { Component } from 'react'
 import mainService from '../services/main.service';
-import Canvas from './canvas.component';
-import PieceComponent from '../generator/piece.component';
-import PieceGeneratorComponent from '../generator/piece-generator.component';
-import PieceGenerator from '../generator/piece-generator';
-import PieceCardComponent from '../components/piece-card.component';
-
-
+import Canvas from '../components/canvas.component';
+import PieceGenerator from '../components/generator/piece-generator';
+import PieceCardComponent from './piece-card.component';
+import Config from "./config.json";
 
 
 class GameComponent extends Component {
-
-
 
     constructor(props) {
         super(props)
         this.state = {
             gameId: JSON.parse(localStorage.getItem("auth")).gameId,
             me: JSON.parse(localStorage.getItem("auth")).player,
-            inviteLink: "http://localhost:3000/joingame/" + JSON.parse(localStorage.getItem("auth")).gameId,
+            inviteLink: "http://192.168.0.135:3000/joingame/" + JSON.parse(localStorage.getItem("auth")).gameId,
 
-            //game
+            //updater
+            isInited: false,
+
+            //game consts
             player1: {},
             player2: {},
-            boardData: {}, // data from server
-            boardView: {}, // symbol, playertype
             width: 16,
             height: 16,
+            pieces: {}, // images of pieces
+
+            // game state
+            boardData: {}, // data from server
+            boardView: {}, // symbol, playertype
             turn: "P1",
             round: 0,
-
+            winner: null,
 
             //selection
             selectedField: {},
             possibleMoves: [],
             pieceId: "",
-
-            //pieces
-            pieces: {}, // images of pieces
-
-            //updater
-            loadTimer: undefined,
-            isInited: false,
-
-
-            //consts
-            squareSize: 45,
-            boardTopx: 30,
-            boardTopy: 30,
-            updateInterval: 2000
         }
         this.selectField = this.selectField.bind(this);
         this.clickOnCanvas = this.clickOnCanvas.bind(this);
@@ -61,44 +48,31 @@ class GameComponent extends Component {
 
     componentDidMount() {
         const { isInited } = this.state;
-        this.updateGameData();
 
+        //Init function 
         if (!isInited) {
-            this.loadBoard(true);
+            this.loadPieceData();
         }
+
+        //start updater
         const loadTimer = setInterval(() => {
             this.updateGameData();
 
-        }, this.state.updateInterval);
+        }, Config.updateInterval);
     }
 
-    loadPieceData(bv) {
-        const { squareSize } = this.state;
-        var pieces = new Map();
-        for (let i = 0; i < bv.length; i++) {
-            for (let j = 0; j < bv[0].length; j++) {
-                if (bv[i][j].symbol !== "" && pieces.get(bv[i][j].symbol) === undefined) {
-                    var pg = new PieceGenerator(squareSize * 0.8, squareSize * 0.95, bv[i][j].symbol);
-                    pieces.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner));
-
-                }
-            }
-        }
-
-        this.setState({ pieces: pieces, isInited: true, boardView: bv, width: bv[0].length, height: bv.length });
-    }
-
-
-
+    //check for ugameupdate
     updateGameData() {
         const { gameId, turn } = this.state;
         mainService.getGameData(gameId).then((res) => {
-            this.setState({ player1: res.data.player1, player2: res.data.player2, turn: res.data.turn, round: res.data.round });
 
+
+
+            this.setState({ player1: res.data.player1, player2: res.data.player2, turn: res.data.turn, round: res.data.round, winner: res.data.winner });
             //when other player made his turn
             if (turn !== res.data.turn) {
 
-                this.loadBoard(false);
+                this.loadBoard();
             }
 
             //check game end ?
@@ -106,36 +80,60 @@ class GameComponent extends Component {
     }
 
 
-
-    loadBoard(init) {
-        const { gameId, squareSize } = this.state;
+    // initial creating piece graphics
+    loadPieceData() {
+        const { gameId } = this.state;
         mainService.getBoard(gameId).then((res) => {
-            let bv = res.data.board;
-            console.log(bv);
+            let bv = this.createBoard(res.data.board);
+            var pieces = new Map();
             for (let i = 0; i < bv.length; i++) {
                 for (let j = 0; j < bv[0].length; j++) {
-                    if (res.data.board[i][j] === null) {
-                        bv[i][j] = {
-                            symbol: "",
-                            owner: "",
-                            possibleMoves: []
-                        };
-                    } else {
-                        bv[i][j] = {
-                            symbol: bv[i][j].symbol,
-                            owner: bv[i][j].owner,
-                            possibleMoves: bv[i][j].possibleMoves
-                        };
+                    if (bv[i][j].symbol !== "" && pieces.get(bv[i][j].symbol) === undefined) {
+                        var pg = new PieceGenerator(Config.squareSize * 0.8, Config.squareSize * 0.95, bv[i][j].symbol);
+                        pieces.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner));
+
                     }
                 }
             }
-            if (init) {
-                this.loadPieceData(bv);
-            } else {
-                this.setState({ boardData: res.data, boardView: bv, width: bv[0].length, height: bv.length });
-            }
+
+            this.setState({ pieces: pieces, isInited: true, boardView: bv, width: bv[0].length, height: bv.length });
         });
     }
+
+    //update Board
+    loadBoard() {
+        const { gameId } = this.state;
+        mainService.getBoard(gameId).then((res) => {
+            let bv = this.createBoard(res.data.board);
+            this.setState({ boardData: res.data, boardView: bv, width: bv[0].length, height: bv.length });
+        });
+    }
+
+
+    // save Board data
+    createBoard(board) {
+        let bv = board;
+        console.log(bv);
+        for (let i = 0; i < bv.length; i++) {
+            for (let j = 0; j < bv[0].length; j++) {
+                if (board[i][j] === null) {
+                    bv[i][j] = {
+                        symbol: "",
+                        owner: "",
+                        possibleMoves: []
+                    };
+                } else {
+                    bv[i][j] = {
+                        symbol: bv[i][j].symbol,
+                        owner: bv[i][j].owner,
+                        possibleMoves: bv[i][j].possibleMoves
+                    };
+                }
+            }
+        }
+        return bv;
+    }
+
 
     selectField(x, y) {
         const { boardView, selectedField, me, turn, possibleMoves } = this.state;
@@ -146,7 +144,7 @@ class GameComponent extends Component {
         if (sthSelected) {
             const isAlreadySelected = selectedField.x === x && selectedField.y === y;
             const isPossibleMove = possibleMoves.some(move => move.x === x && move.y === y);
-            const isOwnSelected = me == boardView[selectedField.y][selectedField.x].owner;
+            const isOwnSelected = me === boardView[selectedField.y][selectedField.x].owner;
 
             // move,unselect, another select ?
 
@@ -189,39 +187,42 @@ class GameComponent extends Component {
     }
 
     play(draw) {
-        const { gameId, turn } = this.state;
-        mainService.play(gameId, draw).then((res) => {
-            console.log("played", turn);
-            const nextTurn = (turn === "P1") ? "P2" : "P1";
-            this.setState({
-                possibleMoves: [],
-                selectedField: {},
-                turn: nextTurn
-            });
+        const { gameId, turn, winner } = this.state;
+        if (winner === null) {
+            mainService.play(gameId, draw).then((res) => {
+                //            console.log("played", turn);
+                const nextTurn = (turn === "P1") ? "P2" : "P1";
+                this.setState({
+                    possibleMoves: [],
+                    selectedField: {},
+                    turn: nextTurn
+                });
 
-            this.updateGameData();
-            this.loadBoard();
-        });
+                this.updateGameData();
+                this.loadBoard();
+            });
+        }
     }
 
 
 
 
     clickOnCanvas(event) {
-        const { squareSize, boardTopy, boardTopx } = this.state;
         const rect = event.target.getBoundingClientRect();
-        const x = event.clientX - rect.left - boardTopx;
-        const y = event.clientY - rect.top - boardTopy;
-        //console.log("x: " + x + " y: " + y);
-        this.selectField((x - x % squareSize) / (squareSize), (y - y % squareSize) / (squareSize));
+        const x = event.clientX - rect.left - Config.boardTopx;
+        const y = event.clientY - rect.top - Config.boardTopy;
+        this.selectField((x - x % Config.squareSize) / (Config.squareSize), (y - y % Config.squareSize) / (Config.squareSize));
     }
 
     drawMethod() {
-        const { width, height, squareSize, boardView, possibleMoves, boardTopy, boardTopx, selectedField, me, pieces, isInited } = this.state;
+        const { width, height, boardView, possibleMoves, selectedField, me, pieces, isInited, winner } = this.state;
 
 
         const draw = (ctx, frameCount) => {
             if (boardView) {
+                const squareSize = Config.squareSize;
+                const boardTopx = Config.boardTopx;
+                const boardTopy = Config.boardTopy;
 
                 ctx.canvas.width = squareSize * (width + 1)
                 ctx.canvas.height = squareSize * (height + 1)
@@ -229,12 +230,13 @@ class GameComponent extends Component {
                 //draw board
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = ((i + j) % 2 == 0) ? "#D2B48C" : "PeachPuff";
+                        ctx.fillStyle = ((i + j) % 2 === 0) ? "#D2B48C" : "PeachPuff";
                         let xOffset = boardTopx + j * squareSize;
                         let yOffset = boardTopy + i * squareSize;
                         ctx.fillRect(xOffset, yOffset, squareSize, squareSize);
                     }
                 }
+
                 if (JSON.stringify(selectedField) !== "{}") {
                     // draw moves
                     ctx.globalAlpha = 0.45;
@@ -279,19 +281,21 @@ class GameComponent extends Component {
                 ctx.strokeStyle = "black";
                 ctx.strokeRect(boardTopx, boardTopy, squareSize * width, squareSize * height)
 
+
+                // draw winner
+                if (winner !== null) {
+                    ctx.fillStyle = "rgba(100,100,100,0.8)"
+                    ctx.fillRect(boardTopx, boardTopy, squareSize * width, squareSize * height)
+
+                    ctx.fillStyle = "red"
+                    ctx.font = '30px serif';
+                    ctx.fillText(winner.name + ' wins!', squareSize * width / 3, squareSize * height / 2);
+                }
+
             }
         }
         return draw;
 
-    }
-
-    drawPiece(pieceCode, player) {
-        if (player === "P1") {
-            //return "♖";
-
-        }
-        return pieceCode;
-        //        return "♜";
     }
 
     drawGameText() {
@@ -303,38 +307,29 @@ class GameComponent extends Component {
     }
 
 
-
-
-
-
     render() {
-        const { inviteLink, player1, player2, boardView, selectedField, turn, me, round, isInited } = this.state;
-        var piece = "";
-        if (boardView[0] && selectedField.x) {
-            piece = boardView[selectedField.y][selectedField.x];
-            //console.log(piece);
-        }
-
-        console.log("pieceId (game component) :", this.state.pieceId);
+        const { inviteLink, player1, player2, round, isInited, winner } = this.state;
+        // console.log("pieceId (game component) :", this.state.pieceId);
         if (isInited) {
-            return (<div>
-                <div>            {this.drawGameText()}</div>
-                <div className="row">
-                    <div class="mb-3 mt-5">       <div className="card">             {this.state.pieceId !== "" && <PieceCardComponent pieceId={this.state.pieceId}></PieceCardComponent>}</div></div>
-                    <div class="mb-5">
-
-                        <Canvas draw={this.drawMethod()} onClick={this.clickOnCanvas} />
-                        {/* <div>{piece.symbol} {" "}{piece.owner}</div>*/}
-                        <div>
-                            {inviteLink}
+            return (
+                <div>
+                    <div>{this.drawGameText()} {" "} {winner !== null && "The Winner is" + winner.name}</div>
+                    <div className="row">
+                        <div class="mb-3 mt-5">
+                            <div className="card">
+                                {this.state.pieceId !== "" && <PieceCardComponent pieceId={this.state.pieceId}></PieceCardComponent>}
+                            </div>
                         </div>
-                        <div>
-                            Player1: {player1 && player1.name} {player2 && <>Player2: {player2.name}</>} {" round:"}{round}
-                        </div>
-                    </div>
+                        <div class="mb-5">
+                            <Canvas draw={this.drawMethod()} onClick={this.clickOnCanvas} />
 
-                </div >
-            </div>
+                            <div>{inviteLink}</div>
+                            <div>
+                                Player1: {player1 && player1.name} {player2 && <>Player2: {player2.name}</>} {" round:"}{round}
+                            </div>
+                        </div>
+                    </div >
+                </div>
             )
         }
         return "";

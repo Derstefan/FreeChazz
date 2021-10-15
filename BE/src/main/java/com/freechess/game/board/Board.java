@@ -5,16 +5,17 @@ import com.freechess.game.pieces.PieceType;
 import com.freechess.game.player.EPlayer;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Board {
 
-    private int width = 8;
-    private int height = 8;
+    private int width;
+    private int height;
 
     private Piece king1;
     private Piece king2;
 
-    private EPlayer winner = null;
+    private Optional<EPlayer> winner = Optional.empty();
 
     private ArrayList<Piece> graveyard = new ArrayList<>();
 
@@ -27,7 +28,47 @@ public class Board {
         board = new Piece[height][width];
     }
 
+    // ----------------------------------------- Board actions
 
+
+    public void perform(Position fromPos, Position toPos){
+        if(getWinner().isPresent()){
+            return;
+        }
+        Piece piece = pieceAt(fromPos);
+        piece.getPieceType().perform(this,fromPos,toPos);
+    }
+
+
+    public void takePiece(Position pos){
+        if(getWinner().isPresent()){
+            return;
+        }
+        Piece p = pieceAt(pos);
+        if(p.equals(king1)){
+            setWinner(king1.getOwner());
+        } else if(p.equals(king2)){
+            setWinner(king2.getOwner());
+        }
+        graveyard.add(p);
+
+        removePiece(pos);
+    }
+
+    public void removePiece(Position pos){
+        if(getWinner().isPresent()){
+            return;
+        }
+        Piece p = board[pos.getX()][pos.getY()];
+        board[pos.getY()][pos.getX()] = null;
+    }
+
+    public void addPiece(Piece piece,Position pos){
+        if(getWinner().isPresent()){
+            return;
+        }
+        board[pos.getY()][pos.getX()] = piece;
+    }
 
     /**
      * Compute possible moves of all pieces.
@@ -45,51 +86,10 @@ public class Board {
         }
     }
 
-    public void perform(Position fromPos, Position toPos){
-        Piece piece = pieceAt(fromPos);
-        piece.getPieceType().perform(this,fromPos,toPos);
-    }
 
 
-    public void takePiece(Position pos){
-        Piece p = board[pos.getX()][pos.getY()];
-        if(p.equals(king1)){
-            winner = king1.getOwner();
-        } else if(p.equals(king2)){
-            winner = king2.getOwner();
-        }
-        graveyard.add(p);
 
-        board[pos.getY()][pos.getX()] = null;
-    }
 
-    public void removePiece(Position pos){
-        Piece p = board[pos.getX()][pos.getY()];
-        board[pos.getY()][pos.getX()] = null;
-    }
-
-    public void addPiece(Piece piece,Position pos){
-        board[pos.getY()][pos.getX()] = piece;
-    }
-
-    public String drawBoard(){
-        String str = "";
-        for(int j=0;j<board[0].length+2;j++){
-            str+=" - ";
-        }
-        str+="\n";
-        for(int i=0;i<board.length;i++){
-            str+="|";
-            for(int j=0;j<board[0].length;j++){
-                str+=symbolAt(new Position(j,i));
-            }
-            str+="|\n";
-        }
-        for(int j=0;j<board[0].length+2;j++){
-            str+=" - ";
-        }
-        return str;
-    }
 
 
     public Piece pieceAt(Position p){
@@ -99,18 +99,12 @@ public class Board {
         return board[p.getY()][p.getX()];
     }
 
+
     public String symbolAt(Position p){
         if(pieceAt(p)!=null){
             return " " +pieceAt(p).getSymbol() + " ";
         }
         return " - ";
-    }
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     public boolean isOnboard(Position pos){
@@ -126,12 +120,24 @@ public class Board {
         return p1.getOwner()!=p2.getOwner();
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public Piece[][] getBoard() {
         return board;
     }
 
-    public EPlayer getWinner() {
+    public Optional<EPlayer> getWinner() {
         return winner;
+    }
+
+    public void setWinner(EPlayer winner) {
+        this.winner = Optional.of(winner);
     }
 
     public Piece getKing1() {
@@ -154,6 +160,36 @@ public class Board {
         return graveyard;
     }
 
+    public int countPieces(){
+        int count = 0;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if(board[i][j]!= null){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 
+
+    public String toString(){
+        String str = "";
+        for(int j=0;j<board[0].length+2;j++){
+            str+=" - ";
+        }
+        str+="\n";
+        for(int i=0;i<board.length;i++){
+            str+="|";
+            for(int j=0;j<board[0].length;j++){
+                str+=symbolAt(new Position(j,i));
+            }
+            str+="|\n";
+        }
+        for(int j=0;j<board[0].length+2;j++){
+            str+=" - ";
+        }
+        return str;
+    }
 
 }

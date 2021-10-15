@@ -1,35 +1,39 @@
 package com.freechess.game;
 
 import com.freechess.game.board.Board;
+import com.freechess.game.draw.Draw;
 import com.freechess.game.pieces.Piece;
 import com.freechess.game.board.Position;
 import com.freechess.game.player.EPlayer;
 import com.freechess.game.player.Player;
-import com.freechess.generators.boardgenerator.BoardGenerator;
+import com.freechess.generators.board.impl.SymmetricBoardGenerator;
 
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Game {
 
-    private UUID gameId;
 
-    private Board board;
+
+    private final UUID gameId;
+
+    private final Board board;
     private Player player1;
     private Player player2;
 
+    private final ArrayList draws = new ArrayList<Draw>();
     private int round = 0;
+
     private EPlayer playersTurn;
 
 
     public Game(){
         gameId = UUID.randomUUID();
-        BoardGenerator gen = new BoardGenerator();
+        SymmetricBoardGenerator gen = new SymmetricBoardGenerator();
         board = gen.generate();
-        if(Math.random()>=0.5){
-            playersTurn=EPlayer.P1;
-        } else {
-            playersTurn = EPlayer.P2;
-        }
+        playersTurn = diceStartPlayer();
+
     }
 
 
@@ -47,6 +51,9 @@ public class Game {
 
 
     public void play(Position fromPos, Position toPos){
+        if(board.getWinner().isPresent()){
+            return;
+        }
         Piece piece = board.pieceAt(fromPos);
         // is it this players turn?
         if(piece.getOwner().equals(playersTurn)){
@@ -61,8 +68,8 @@ public class Game {
 
     private void endTurn(){
         //Check Win/Lose
-        if(board.getWinner()!=null){
-            // board.getWinner() winns
+        if(board.getWinner().isPresent()){
+            // board.getWinner() wins
         }
 
         if(playersTurn.equals(EPlayer.P1)){
@@ -77,10 +84,6 @@ public class Game {
 
     public UUID getGameId() {
         return gameId;
-    }
-
-    public void setGameId(UUID gameId) {
-        this.gameId = gameId;
     }
 
     public Player getPlayer1() {
@@ -101,5 +104,27 @@ public class Game {
 
     public EPlayer getPlayersTurn() {
         return playersTurn;
+    }
+
+    public Optional<Player> getWinner(){
+
+        Optional<EPlayer> winner = board.getWinner();
+        if(winner.isEmpty()){
+            return Optional.empty();
+        }
+        if(winner.get()==EPlayer.P1){
+            return Optional.of(player1);
+        } else {
+            return Optional.of(player2);
+        }
+
+    }
+
+    private EPlayer diceStartPlayer(){
+        if(Math.random()>=0.5){
+            return EPlayer.P1;
+        } else {
+            return EPlayer.P2;
+        }
     }
 }

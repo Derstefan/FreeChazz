@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Piece {
 
 
-    private String symbol = "P";
+    private String symbol;
     private PieceType pieceType;
 
     private EPlayer owner;

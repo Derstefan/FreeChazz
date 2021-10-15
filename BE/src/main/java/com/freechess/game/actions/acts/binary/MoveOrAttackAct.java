@@ -26,7 +26,8 @@ public class MoveOrAttackAct extends Act {
             }
             if (!targetPiece.getOwner().equals(owner)) {
                 // attack enemy
-                board.removePiece(pos2);
+                if(board.pieceAt(pos2)==null)System.out.println("blabla1");
+                board.takePiece(pos2);
             }
         }
         board.removePiece(pos1);

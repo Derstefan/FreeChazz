@@ -4,6 +4,7 @@ import com.freechess.game.player.EPlayer;
 import com.freechess.game.Game;
 import com.freechess.game.player.Player;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class GameData {
@@ -13,7 +14,7 @@ public class GameData {
     private Player player2;
     private EPlayer turn;
     private int round;
-    private EPlayer winner;
+    private Optional<Player> winner;
 
     public GameData(Game game) {
         this.gameId = game.getGameId();
@@ -21,6 +22,7 @@ public class GameData {
         this.player2 = game.getPlayer2();
         this.turn = game.getPlayersTurn();
         this.round = game.getRound();
+        this.setWinner(game.getWinner());
     }
 
 
@@ -44,11 +46,11 @@ public class GameData {
         return round;
     }
 
-    public EPlayer getWinner() {
+    public Optional<Player> getWinner() {
         return winner;
     }
 
-    public void setWinner(EPlayer winner) {
+    public void setWinner(Optional<Player> winner) {
         this.winner = winner;
     }
 }
