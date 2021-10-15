@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/")
 public class GeneratorController {
 
-    // get gameId data
+    // generate piece
     @GetMapping("piece/{pieceId}")
     public ResponseEntity<PieceType> getPiece(@PathVariable long pieceId){
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const MAIN_API_BASE_URL = "http://localhost:8080/api";
+const MAIN_API_BASE_URL = "http://192.168.0.135:8080/api";
 
 class MainService {
 

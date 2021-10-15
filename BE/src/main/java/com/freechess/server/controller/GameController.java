@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@CrossOrigin(origins = {"http://localhost:3000","http://192.168.178.136:3000"})
+@CrossOrigin(origins = {"http://localhost:3000","http://192.168.0.135:3000"})
 @RestController
 @RequestMapping("api/")
 public class GameController {
@@ -63,7 +63,7 @@ public class GameController {
         return ResponseEntity.notFound().build();
     }
 
-    // just gets some metaData of the game, maybe just for tests
+    // get some data for update check
     @GetMapping("gamedata/{gameId}")
     public ResponseEntity<GameData> getGameData(@PathVariable UUID gameId){
         Game game = server.getGameById(gameId);
@@ -74,7 +74,7 @@ public class GameController {
         return ResponseEntity.notFound().build();
     }
 
-    // get gameId data
+    // get full board
     @GetMapping("board/{gameId}")
     public ResponseEntity<Board> getBoard(@RequestHeader HttpHeaders headers, @PathVariable UUID gameId){
         if(validate(headers)){

@@ -13,7 +13,7 @@ class GameComponent extends Component {
         this.state = {
             gameId: JSON.parse(localStorage.getItem("auth")).gameId,
             me: JSON.parse(localStorage.getItem("auth")).player,
-            inviteLink: "http://192.168.178.136:3000/joingame/" + JSON.parse(localStorage.getItem("auth")).gameId,
+            inviteLink: "http://192.168.0.135:3000/joingame/" + JSON.parse(localStorage.getItem("auth")).gameId,
 
             //updater
             isInited: false,

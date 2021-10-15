@@ -19,7 +19,7 @@ public class ServerController {
     @Autowired
     private Server server;
 
-    // get gameId data
+    // get some data from server TODO: Maybe better metrics
     @GetMapping("serverdata")
     public ResponseEntity<ServerData> getServerData(){
         return ResponseEntity.ok(new ServerData(server));
