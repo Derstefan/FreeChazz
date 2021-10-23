@@ -11,6 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BoardTest {
 
 
+    //TODO: dashier ist eigentlich schon ein generator tests
+    // besser wäre hier ein direkt erstelltes board mit dem helper
+
+
     @Test
     public void whenBoardGenerated_areEnemysMethodWorks() {
         SymmetricBoardGenerator gen = new SymmetricBoardGenerator(1);

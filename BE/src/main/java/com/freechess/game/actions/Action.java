@@ -36,7 +36,7 @@ public class Action {
         return condition.check(board,pos1,pos2);
     }
 
-    public void perform(Board board, Position pos1, Position pos2){
+    public void perform(Board board, Position pos1, Position pos2) throws Exception{
         if(checkCondition(board, pos1, pos2)){
             act.perform(board, pos1, pos2);
         }

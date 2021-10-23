@@ -12,7 +12,7 @@ public class DefaultPieceType extends PieceType{
     private ActionMap actions = new ActionMap();
 
     @Override
-    public void perform(Board board, Position fromPos, Position toPos) {
+    public void perform(Board board, Position fromPos, Position toPos) throws Exception {
         Piece piece = board.pieceAt(fromPos);
         boolean topDown = piece.getOwner()!= EPlayer.P2;
         Position dPos = toPos.minus(fromPos);

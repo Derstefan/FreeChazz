@@ -13,7 +13,7 @@ public abstract class PieceType {
 
     }
 
-    public abstract void perform(Board board,Position fromPos, Position toPos);
+    public abstract void perform(Board board,Position fromPos, Position toPos) throws Exception;
 
     public abstract ArrayList<Position> computePossibleMoves(Board board, Position pos);
 

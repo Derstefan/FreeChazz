@@ -3,10 +3,12 @@ package com.freechess.game.board;
 import com.freechess.game.pieces.Piece;
 import com.freechess.game.pieces.PieceType;
 import com.freechess.game.player.EPlayer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
+@Slf4j
 public class Board {
 
     private int width;
@@ -36,8 +38,12 @@ public class Board {
             return;
         }
         Piece piece = pieceAt(fromPos);
-        piece.getPieceType().perform(this,fromPos,toPos);
-    }
+        try{
+            piece.getPieceType().perform(this,fromPos,toPos);
+        } catch (Exception e){
+            log.warn("There was an Error performing this draw.");
+        }
+     }
 
 
     public void takePiece(Position pos){

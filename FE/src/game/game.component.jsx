@@ -4,6 +4,7 @@ import Canvas from '../components/canvas.component';
 import PieceGenerator from '../components/generator/piece-generator';
 import PieceCardComponent from './piece-card.component';
 import Config from "./config.json";
+import serverConfig from "../services/server-config.json";
 
 
 class GameComponent extends Component {
@@ -13,7 +14,7 @@ class GameComponent extends Component {
         this.state = {
             gameId: JSON.parse(localStorage.getItem("auth")).gameId,
             me: JSON.parse(localStorage.getItem("auth")).player,
-            inviteLink: "http://192.168.0.135:3000/joingame/" + JSON.parse(localStorage.getItem("auth")).gameId,
+            inviteLink: "http://" + serverConfig.host + ":3000/joingame/" + JSON.parse(localStorage.getItem("auth")).gameId,
 
             //updater
             isInited: false,
@@ -28,7 +29,7 @@ class GameComponent extends Component {
             // game state
             boardData: {}, // data from server
             boardView: {}, // symbol, playertype
-            turn: "P1",
+            turn: "undef",
             round: 0,
             winner: null,
 

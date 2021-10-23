@@ -6,7 +6,7 @@ import com.freechess.game.actions.conditions.binary.FriendAtPostionCondition;
 import com.freechess.game.actions.conditions.unitary.FreePostionCondition;
 
 public class Actions {
-
+    // Mapping zu Json? vll enum mit konstruktoren verbunden?
     public static Action MOVE_TO_FREE_POSITION(){
         FreePostionCondition cond = new FreePostionCondition();
         MoveOrAttackAct act = new MoveOrAttackAct();
@@ -31,5 +31,9 @@ public class Actions {
         Action moveOrAttack  = new Action(cond1.OR(cond2),act);
         moveOrAttack.setSymbol('X');
         return moveOrAttack;
+    }
+
+    public static Action WALK_TO_FREE_FIELD_OR_ATTACK(){
+        return null;
     }
 }
