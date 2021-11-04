@@ -105,6 +105,20 @@ public class Board {
         return board[p.getY()][p.getX()];
     }
 
+    public boolean isFree(Position p){
+        if(board[p.getY()][p.getX()]==null){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isFree(int x,int y){
+        if(board[y][x]==null){
+            return true;
+        }
+        return false;
+    }
+
 
     public String symbolAt(Position p){
         if(pieceAt(p)!=null){

@@ -146,11 +146,11 @@ public class DefaultPieceTypeGenerator implements PieceTypeGenerator {
     private Action generateActionType() {
         double wsk = rand.nextDouble();
         if (wsk <= gc.ENEMY_MOVE_WSK) {
-            return Actions.MOVE_TO_ENEMY_POSITION();
+            return Actions.MOVE_TO_ENEMY_POSITION;
         } else if (wsk - gc.ENEMY_MOVE_WSK <= gc.FREE_FIELD_MOVE_WSK) {
-            return Actions.MOVE_TO_FREE_POSITION();
+            return Actions.MOVE_TO_FREE_POSITION;
         }
-        return Actions.MOVE_OR_ATTACK();
+        return Actions.MOVE_OR_ATTACK_ACTION;
 
     }
 

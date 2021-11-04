@@ -1,39 +1,25 @@
 package com.freechess.game.actions;
 
-import com.freechess.game.actions.acts.binary.MoveOrAttackAct;
-import com.freechess.game.actions.conditions.binary.EnemyAtPostionCondition;
-import com.freechess.game.actions.conditions.binary.FriendAtPostionCondition;
-import com.freechess.game.actions.conditions.unitary.FreePostionCondition;
+
+
+
+
+
+import com.freechess.game.actions.acts.Acts;
+
+import static com.freechess.game.actions.acts.Acts.MOVE_OR_ATTACK;
+import static com.freechess.game.actions.conditions.Conditions.*;
 
 public class Actions {
     // Mapping zu Json? vll enum mit konstruktoren verbunden?
-    public static Action MOVE_TO_FREE_POSITION(){
-        FreePostionCondition cond = new FreePostionCondition();
-        MoveOrAttackAct act = new MoveOrAttackAct();
-        Action moveToFreePosition  = new Action(cond,act);
-        moveToFreePosition.setSymbol('F');
-        return moveToFreePosition;
-    }
 
-    public static Action MOVE_TO_ENEMY_POSITION(){
-        EnemyAtPostionCondition cond = new EnemyAtPostionCondition();
-        MoveOrAttackAct act = new MoveOrAttackAct();
-        Action moveToEnemyPosition  = new Action(cond,act);
-        moveToEnemyPosition.setSymbol('E');
-        return moveToEnemyPosition;
-    }
+    public static Action MOVE_TO_FREE_POSITION = new Action(FREE_POSITION, MOVE_OR_ATTACK,'F');
 
-    public static Action MOVE_OR_ATTACK(){
-        EnemyAtPostionCondition cond1 = new EnemyAtPostionCondition();
-        FreePostionCondition cond2 = new FreePostionCondition();
-        MoveOrAttackAct act = new MoveOrAttackAct();
+    public static Action MOVE_TO_ENEMY_POSITION = new Action(ENEMY_AT_POSITION, MOVE_OR_ATTACK,'E');
 
-        Action moveOrAttack  = new Action(cond1.OR(cond2),act);
-        moveOrAttack.setSymbol('X');
-        return moveOrAttack;
-    }
+    public static Action MOVE_OR_ATTACK_ACTION = new Action(ENEMY_AT_POSITION.OR(FREE_POSITION), MOVE_OR_ATTACK,'X');
 
-    public static Action WALK_TO_FREE_FIELD_OR_ATTACK(){
-        return null;
-    }
+    public static Action WALK_AND_MOVE_OR_ATTACK = new Action(CLEAR_PATH, MOVE_OR_ATTACK,'M');
+
+
 }

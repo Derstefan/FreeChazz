@@ -12,7 +12,7 @@ public class ActionTest {
 
     @Test
     void actionTest(){
-        Action action = Actions.MOVE_OR_ATTACK();
+        Action action = Actions.MOVE_OR_ATTACK_ACTION;
 
     }
 

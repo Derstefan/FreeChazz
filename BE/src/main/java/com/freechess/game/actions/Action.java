@@ -25,6 +25,13 @@ public class Action {
     public Action(Condition condition,Act act){
         this.condition = condition;
         this.act= act;
+        symbol = 'x';
+    }
+
+    public Action(Condition condition,Act act,char symbol){
+        this.condition = condition;
+        this.act= act;
+        this.symbol=symbol;
     }
 
     public Action(Act act){
