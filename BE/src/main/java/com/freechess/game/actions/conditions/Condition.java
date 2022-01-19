@@ -8,13 +8,7 @@ import com.freechess.game.board.Position;
 
 public abstract class Condition {
 
-    //TODO: sollte wieder raus und besser für rest api seriealisieren?
-  /*  protected String type;
-    /**
-     *     ... unitary conditions uses pos2!!
-      */
     public abstract boolean check(Board board, Position pos1, Position pos2);
-
 
     public AndCondition AND(Condition cond2){
         return new AndCondition(this,cond2);
@@ -27,8 +21,4 @@ public abstract class Condition {
     public NotCondition NOT(){
         return new NotCondition(this);
     }
-
-   /* public String getType() {
-        return type;
-    }*/
 }

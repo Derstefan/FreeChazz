@@ -25,6 +25,13 @@ public class Action {
     public Action(Condition condition,Act act){
         this.condition = condition;
         this.act= act;
+        symbol = 'x';
+    }
+
+    public Action(Condition condition,Act act,char symbol){
+        this.condition = condition;
+        this.act= act;
+        this.symbol=symbol;
     }
 
     public Action(Act act){
@@ -36,7 +43,7 @@ public class Action {
         return condition.check(board,pos1,pos2);
     }
 
-    public void perform(Board board, Position pos1, Position pos2){
+    public void perform(Board board, Position pos1, Position pos2) throws Exception{
         if(checkCondition(board, pos1, pos2)){
             act.perform(board, pos1, pos2);
         }

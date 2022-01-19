@@ -2,5 +2,14 @@
     "squareSize": 45,
     "boardTopx": 30,
     "boardTopy": 30,
-    "updateInterval": 2000
+    "updateInterval": 2000,
+    "card": {
+        "width": 160,
+        "height": 300,
+        "imageWisth": 100,
+        "imageHeight": 120,
+        "actionsSize": 9,
+        "actionsOffsetX": 13,
+        "actionsOffsetY": 160
+    }
 }

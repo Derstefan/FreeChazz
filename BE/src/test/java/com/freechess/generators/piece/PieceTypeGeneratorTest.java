@@ -1,6 +1,6 @@
 package com.freechess.generators.piece;
 
-import com.freechess.game.pieces.PieceType;
+import com.freechess.game.pieces.IPieceType;
 import com.freechess.generators.piece.impl.PieceTypeGeneratorPool;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +14,8 @@ public class PieceTypeGeneratorTest {
     public void shouldGeneratePieceType(){
         PieceTypeGeneratorPool gen = new PieceTypeGeneratorPool();
         Random rand = new Random();
-        PieceType p1 = gen.generate(1,rand.nextLong()/10);
-        PieceType p2 = gen.generate(rand.nextLong());
+        IPieceType p1 = gen.generate(1,rand.nextLong()/10);
+        IPieceType p2 = gen.generate(rand.nextLong());
 
         assertThat(p1).isNotNull();
         assertThat(p2).isNotNull();

@@ -1,7 +1,7 @@
 package com.freechess.generators.board.impl;
 
 import com.freechess.game.board.Position;
-import com.freechess.game.pieces.PieceType;
+import com.freechess.game.pieces.IPieceType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,10 +34,10 @@ public class GenUtil {
         return positions;
     }
 
-    public static PieceType getRandomEntryOf(Set<PieceType> pieceTypes, Random rand) {
+    public static IPieceType getRandomEntryOf(Set<IPieceType> pieceTypes, Random rand) {
 
         int index = rand.nextInt(pieceTypes.size());
-        Iterator<PieceType> iter = pieceTypes.iterator();
+        Iterator<IPieceType> iter = pieceTypes.iterator();
         for (int i = 0; i < index; i++) {
             iter.next();
         }

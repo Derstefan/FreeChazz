@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import Canvas from '../components/canvas.component';
 import PieceGenerator from '../components/generator/piece-generator';
 import mainService from '../services/main.service';
+import PieceCard from './piece-card';
+import Config from "./config.json";
 
 /**
  * 
@@ -20,6 +22,7 @@ class PieceCardComponent extends Component {
             pieceImage: "",
 
             piece: {},
+            pieceCard: new PieceCard(),
 
             //consts
             actionsSize: 9,
@@ -29,7 +32,6 @@ class PieceCardComponent extends Component {
             imageOffsetX: 32,
             imageOffsetY: 10
         }
-
     }
 
     componentDidMount() {
@@ -44,8 +46,7 @@ class PieceCardComponent extends Component {
                         piece: res.data,
                         pieceImage: pg.drawPieceCanvas("P1")
                     });
-                    //      console.log(res.data);
-
+                    console.log(res.data);
                 }
                 );
             }
@@ -67,57 +68,12 @@ class PieceCardComponent extends Component {
 
 
     drawCanvas() {
-        const { piece, pieceImage, width, height, actionsSize, actionsOffsetX, actionsOffsetY } = this.state;
+        const { pieceCard, piece, pieceImage } = this.state;
 
         const draw = (ctx, frameCount) => {
-            ctx.canvas.width = width
-            ctx.canvas.height = height
-            if (piece.moves !== undefined) {
-                ctx.drawImage(pieceImage, 32, 10);
-                // draw actions
-
-                for (var i = 0; i < piece.moves.actions.length; i++) {
-                    for (var j = 0; j < piece.moves.actions[0].length; j++) {
-                        if (piece.moves.actions[i][j] !== "-") {
-                            if (piece.moves.actions[i][j] === "P") {
-                                ctx.fillStyle = "#11AA11";
-                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
-                            } else if (piece.moves.actions[i][j] === "E") {
-                                ctx.fillStyle = "#BB1111";
-                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
-                            } else if (piece.moves.actions[i][j] === "F") {
-                                ctx.fillStyle = "#1111BB";
-                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
-                            } else {
-                                ctx.fillStyle = "#666666";
-                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
-                            }
-                        }
-                    }
-                }
-
-                ctx.lineWidth = 0.5;
-                ctx.strokeStyle = "#AAAAAA";
-                for (i = 0; i < piece.moves.actions.length + 1; i++) {
-                    //  ctx.drawline(actionsOffsetX + i * actionsSize, actionsOffsetY, actionsOffsetX + i * actionsSize, actionsOffsetX + piece.moves.actions.length + 1 * actionsSize);
-
-
-                    ctx.beginPath();
-                    ctx.moveTo(actionsOffsetX + i * actionsSize, actionsOffsetY);
-                    ctx.lineTo(actionsOffsetX + i * actionsSize, actionsOffsetY + (piece.moves.actions.length) * actionsSize);
-                    ctx.stroke();
-
-                    ctx.beginPath();
-                    ctx.moveTo(actionsOffsetX, actionsOffsetY + i * actionsSize);
-                    ctx.lineTo(actionsOffsetX + (piece.moves.actions.length) * actionsSize, actionsOffsetY + i * actionsSize);
-                    ctx.stroke();
-
-                }
-            }
-
-
-
-
+            ctx.canvas.width = Config.card.width;
+            ctx.canvas.height = Config.card.height;
+            ctx.drawImage(pieceCard.drawPieceCard(piece, pieceImage), 0, 0);
         }
         return draw;
     }
@@ -126,8 +82,11 @@ class PieceCardComponent extends Component {
 
 
     render() {
-
-        return (<div><Canvas draw={this.drawCanvas()} /> </div>);
+        const { piece, pieceImage } = this.state;
+        if (piece && pieceImage) {
+            return (<div><Canvas draw={this.drawCanvas()} /> </div>);
+        }
+        return "";
     }
 }
 

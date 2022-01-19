@@ -1,12 +1,15 @@
 package com.freechess.game.board;
 
+import com.freechess.game.pieces.IPieceType;
 import com.freechess.game.pieces.Piece;
-import com.freechess.game.pieces.PieceType;
+import com.freechess.game.pieces.impl.PieceType;
 import com.freechess.game.player.EPlayer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
+@Slf4j
 public class Board {
 
     private int width;
@@ -22,7 +25,7 @@ public class Board {
 
     private Piece[][] board;
 
-    public Board(int width, int height) {
+    private Board(int width, int height) {
         this.width = width;
         this.height = height;
         board = new Piece[height][width];
@@ -36,8 +39,12 @@ public class Board {
             return;
         }
         Piece piece = pieceAt(fromPos);
-        piece.getPieceType().perform(this,fromPos,toPos);
-    }
+        try{
+            piece.getPieceType().perform(this,fromPos,toPos);
+        } catch (Exception e){
+            log.warn("There was an Error performing this draw.");
+        }
+     }
 
 
     public void takePiece(Position pos){
@@ -79,7 +86,7 @@ public class Board {
                 Position pos = new Position(i,j);
                 Piece piece = pieceAt(pos);
                 if(piece!=null){
-                    PieceType type = piece.getPieceType();
+                    IPieceType type = piece.getPieceType();
                     piece.setPossibleMoves(type.computePossibleMoves(this,pos));
                 }
             }
@@ -98,6 +105,21 @@ public class Board {
         }
         return board[p.getY()][p.getX()];
     }
+
+    public boolean isFree(Position p){
+        if(board[p.getY()][p.getX()]==null){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isFree(int x,int y){
+        if(board[y][x]==null){
+            return true;
+        }
+        return false;
+    }
+
 
 
     public String symbolAt(Position p){
@@ -190,6 +212,10 @@ public class Board {
             str+=" - ";
         }
         return str;
+    }
+
+    public static Board getInstance(int width, int height){
+        return new Board(width,height);
     }
 
 }

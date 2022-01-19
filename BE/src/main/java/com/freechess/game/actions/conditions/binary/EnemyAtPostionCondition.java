@@ -8,10 +8,6 @@ import java.util.Objects;
 
 public class EnemyAtPostionCondition extends Condition {
 
-  /*  public EnemyAtPostionCondition() {
-        this.type = "EnemyAtPostionCondition";
-    }*/
-
     @Override
     public boolean check(Board board, Position pos1, Position pos2) {
         Objects.requireNonNull(board);

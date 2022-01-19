@@ -12,6 +12,7 @@ public class Position implements Comparable<Position> {
         this.y = y;
     }
 
+
     public int getX() {
         return x;
     }
@@ -52,6 +53,10 @@ public class Position implements Comparable<Position> {
 
     public String toString() {
         return "(x=" + x + ",y=" + y + ")";
+    }
+
+    public Position copy(){
+        return new Position(getX(),getY());
     }
 
     @Override
