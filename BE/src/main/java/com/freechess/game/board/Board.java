@@ -1,7 +1,8 @@
 package com.freechess.game.board;
 
+import com.freechess.game.pieces.IPieceType;
 import com.freechess.game.pieces.Piece;
-import com.freechess.game.pieces.PieceType;
+import com.freechess.game.pieces.impl.PieceType;
 import com.freechess.game.player.EPlayer;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +25,7 @@ public class Board {
 
     private Piece[][] board;
 
-    public Board(int width, int height) {
+    private Board(int width, int height) {
         this.width = width;
         this.height = height;
         board = new Piece[height][width];
@@ -85,7 +86,7 @@ public class Board {
                 Position pos = new Position(i,j);
                 Piece piece = pieceAt(pos);
                 if(piece!=null){
-                    PieceType type = piece.getPieceType();
+                    IPieceType type = piece.getPieceType();
                     piece.setPossibleMoves(type.computePossibleMoves(this,pos));
                 }
             }
@@ -118,6 +119,7 @@ public class Board {
         }
         return false;
     }
+
 
 
     public String symbolAt(Position p){
@@ -210,6 +212,10 @@ public class Board {
             str+=" - ";
         }
         return str;
+    }
+
+    public static Board getInstance(int width, int height){
+        return new Board(width,height);
     }
 
 }

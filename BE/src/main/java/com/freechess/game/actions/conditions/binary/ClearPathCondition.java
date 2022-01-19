@@ -4,6 +4,7 @@ import com.freechess.game.actions.conditions.Condition;
 import com.freechess.game.board.Board;
 import com.freechess.game.board.Position;
 
+
 /**
  * Checks if the path between two positions is free (exluding start- and endpoint)
  */
@@ -11,6 +12,7 @@ public class ClearPathCondition extends Condition {
 
     @Override
     public boolean check(Board board, Position pos1, Position pos2) {
+
         // wie hindere ich pos1 oder pos2 hier drin zu bearbeiten - protected?
 
         // check equal pos
@@ -30,10 +32,10 @@ public class ClearPathCondition extends Condition {
             x+=dx/l;
             y+=dy/l;
             if(!board.isFree(x,y)){
+
                 return false;
             }
         }
         return true;
-
     }
 }

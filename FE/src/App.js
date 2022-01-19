@@ -1,4 +1,5 @@
 import './App.css';
+import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import HeaderComponent from './components/header.component';
 import StartComponent from './components/startGame.component';

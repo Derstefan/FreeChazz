@@ -11,13 +11,13 @@ public class Piece {
 
 
     private String symbol;
-    private PieceType pieceType;
+    private IPieceType pieceType;
 
     private EPlayer owner;
     private ArrayList<Position> possibleMoves = new ArrayList<>();
 
 
-    public Piece(EPlayer owner, PieceType pieceType){
+    public Piece(EPlayer owner, IPieceType pieceType){
         this.owner = owner;
         this.pieceType = pieceType;
         this.symbol = pieceType.getSymbol();
@@ -44,11 +44,11 @@ public class Piece {
     }
 
     @JsonIgnore
-    public PieceType getPieceType() {
+    public IPieceType getPieceType() {
         return pieceType;
     }
 
-    public void setPieceType(PieceType pieceType) {
+    public void setPieceType(IPieceType pieceType) {
         this.pieceType = pieceType;
     }
 

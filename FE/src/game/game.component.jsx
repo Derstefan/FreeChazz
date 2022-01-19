@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import mainService from '../services/main.service';
 import Canvas from '../components/canvas.component';
 import PieceGenerator from '../components/generator/piece-generator';
-import PieceCardComponent from './piece-card.component';
+import PieceCard from './piece-card';
 import Config from "./config.json";
 import serverConfig from "../services/server-config.json";
 
@@ -25,6 +25,11 @@ class GameComponent extends Component {
             width: 16,
             height: 16,
             pieces: {}, // images of pieces
+
+            //pieceData for cards
+            pieceImages: {}, //cardImages of pieces
+            actions: {}, // actions of pieces
+            pieceCard: new PieceCard(),
 
             // game state
             boardData: {}, // data from server
@@ -86,18 +91,30 @@ class GameComponent extends Component {
         const { gameId } = this.state;
         mainService.getBoard(gameId).then((res) => {
             let bv = this.createBoard(res.data.board);
+            console.log(bv)
             var pieces = new Map();
+            var actions = new Map();
+            var pieceImages = new Map();
             for (let i = 0; i < bv.length; i++) {
                 for (let j = 0; j < bv[0].length; j++) {
                     if (bv[i][j].symbol !== "" && pieces.get(bv[i][j].symbol) === undefined) {
                         var pg = new PieceGenerator(Config.squareSize * 0.8, Config.squareSize * 0.95, bv[i][j].symbol);
                         pieces.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner));
 
+                        //TODO: load actionsdata
+
+                        mainService.pieceData(bv[i][j].symbol).then(res => {
+                            var pg = new PieceGenerator(100, 120, "" + bv[i][j].symbol);
+                            pieceImages.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner))
+                            actions.set(bv[i][j].symbol, res.data);
+                        });
+
+
                     }
                 }
             }
 
-            this.setState({ pieces: pieces, isInited: true, boardView: bv, width: bv[0].length, height: bv.length });
+            this.setState({ pieces: pieces, actions: actions, pieceImages: pieceImages, isInited: true, boardView: bv, width: bv[0].length, height: bv.length });
         });
     }
 
@@ -216,7 +233,7 @@ class GameComponent extends Component {
     }
 
     drawMethod() {
-        const { width, height, boardView, possibleMoves, selectedField, me, pieces, isInited, winner } = this.state;
+        const { width, height, boardView, possibleMoves, selectedField, me, pieces, isInited, winner, pieceId, pieceCard, actions, pieceImages } = this.state;
 
 
         const draw = (ctx, frameCount) => {
@@ -225,8 +242,13 @@ class GameComponent extends Component {
                 const boardTopx = Config.boardTopx;
                 const boardTopy = Config.boardTopy;
 
-                ctx.canvas.width = squareSize * (width + 1)
-                ctx.canvas.height = squareSize * (height + 1)
+                ctx.canvas.width = squareSize * (width + 1) + Config.card.width;
+                ctx.canvas.height = squareSize * (height + 1);
+
+                //draw card
+                if (pieceId !== "") {
+                    ctx.drawImage(pieceCard.drawPieceCard(actions.get(pieceId), pieceImages.get(pieceId)), squareSize * (width + 1), 0);
+                }
 
                 //draw board
                 for (let i = 0; i < width; i++) {
@@ -310,17 +332,12 @@ class GameComponent extends Component {
 
     render() {
         const { inviteLink, player1, player2, round, isInited, winner } = this.state;
-        // console.log("pieceId (game component) :", this.state.pieceId);
+
         if (isInited) {
             return (
                 <div>
                     <div>{this.drawGameText()} {" "} {winner !== null && "The Winner is" + winner.name}</div>
                     <div className="row">
-                        <div class="mb-3 mt-5">
-                            <div className="card">
-                                {this.state.pieceId !== "" && <PieceCardComponent pieceId={this.state.pieceId}></PieceCardComponent>}
-                            </div>
-                        </div>
                         <div class="mb-5">
                             <Canvas draw={this.drawMethod()} onClick={this.clickOnCanvas} />
 
