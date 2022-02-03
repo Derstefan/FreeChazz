@@ -13,4 +13,7 @@ public interface IPieceType {
     public abstract ArrayList<Position> computePossibleMoves(Board board, Position pos);
 
     public abstract String getSymbol();
+
+    //TODO: maybe better "serilizer"?
+    public abstract String getSerial();
 }

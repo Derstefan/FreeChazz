@@ -1,25 +1,49 @@
 package com.freechess.game.pieces.impl;
 
 import com.freechess.game.actions.Action;
+import com.freechess.game.actions.Actions;
 import com.freechess.game.board.Board;
 import com.freechess.game.board.Position;
+import com.freechess.game.exception.FailedParsingPieceTypeException;
 import com.freechess.game.pieces.IPieceType;
 import com.freechess.game.pieces.Piece;
 import com.freechess.game.player.EPlayer;
 
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Scanner;
 
 public class PieceType implements IPieceType {
 
     private String symbol = "X";
-    private long seed; //can be null
-
-    //Seed hinzufügen?
 
     private ActionMap actions = new ActionMap();
 
-
     private PieceType(){
+
+    }
+
+    private PieceType(String serial) throws FailedParsingPieceTypeException{
+        Scanner s1 = new Scanner(serial);
+        s1.useDelimiter(";");
+
+        for(int i=0;s1.hasNext();i++){
+            if(i>0){
+                Scanner s2 = new Scanner(s1.next());
+                s2.useDelimiter(",");
+
+               char action = s2.next().charAt(0);
+               int x = Integer.valueOf(s2.next());
+               int y = Integer.valueOf(s2.next());
+               actions.put(new Position(x,y), Actions.getActionBySymbol(action));
+
+            } else {
+                //its first, there is no action data
+                symbol = s1.next();
+            }
+
+        }
+
 
     }
 
@@ -62,11 +86,11 @@ public class PieceType implements IPieceType {
     }
 
 
-    public ActionMap getActions() {
+    public ActionMap getActionMap() {
         return actions;
     }
 
-    public void setActions(ActionMap actions) {
+    public void setActionMap(ActionMap actions) {
         this.actions = actions;
     }
 
@@ -79,7 +103,42 @@ public class PieceType implements IPieceType {
         this.symbol = symbol;
     }
 
+    public String getSerial(){
+        String id = symbol+";";
+        for(Position p: actions.keySet()){
+            id += actions.get(p).getSymbol() + "," + p.getX() + "," +p.getY() + ";";
+        }
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PieceType pieceType = (PieceType) o;
+        for(Position p: this.actions.keySet()){
+            if(!p.isIn(pieceType.actions.keySet())){
+                return false;
+            }
+        }
+        for(Position p: pieceType.actions.keySet()){
+            if(!p.isIn(this.actions.keySet())){
+                return false;
+            }
+        }
+        return Objects.equals(symbol, pieceType.symbol);
+    }
+
     public static PieceType getInstance(){
         return new PieceType();
+    }
+
+    public static PieceType getInstance(String id) throws FailedParsingPieceTypeException {
+        try {
+        return new PieceType(id);
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+            throw new FailedParsingPieceTypeException();
+        }
     }
 }

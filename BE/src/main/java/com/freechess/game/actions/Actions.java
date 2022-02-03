@@ -18,4 +18,18 @@ public class Actions {
 
     public static Action WALK_AND_MOVE_OR_ATTACK = new Action(CLEAR_PATH, MOVE_OR_ATTACK,'M');
 
+
+    //TODO: automatic mapping from symbol to Action
+    public static Action getActionBySymbol(char symbol){
+        switch (symbol){
+            case 'F':
+                return MOVE_TO_FREE_POSITION;
+            case 'E':
+                return MOVE_TO_ENEMY_POSITION;
+            case 'M':
+                return WALK_AND_MOVE_OR_ATTACK;
+            default:
+                return MOVE_OR_ATTACK_ACTION;
+        }
+    }
 }

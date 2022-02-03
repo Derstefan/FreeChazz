@@ -103,10 +103,11 @@ class GameComponent extends Component {
 
                         //TODO: load actionsdata
 
-                        mainService.pieceData(bv[i][j].symbol).then(res => {
+                        mainService.pieceData(bv[i][j].symbol).then(res2 => {
+                            console.log(res2.data);
                             var pg = new PieceGenerator(100, 120, "" + bv[i][j].symbol);
                             pieceImages.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner))
-                            actions.set(bv[i][j].symbol, res.data);
+                            actions.set(bv[i][j].symbol, res2.data);
                         });
 
 

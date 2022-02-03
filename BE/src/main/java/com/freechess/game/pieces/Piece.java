@@ -43,6 +43,10 @@ public class Piece {
         this.symbol = symbol;
     }
 
+    public String getPieceId() {
+        return pieceType.getSerial();
+    }
+
     @JsonIgnore
     public IPieceType getPieceType() {
         return pieceType;

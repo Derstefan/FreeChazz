@@ -1,6 +1,7 @@
 package com.freechess.game.board;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Position implements Comparable<Position> {
 
@@ -45,6 +46,15 @@ public class Position implements Comparable<Position> {
 
     public boolean equals(Position pos) {
         return pos.getX() == this.getX() && pos.getY() == this.getY();
+    }
+
+    public boolean isIn(Set<Position> positions){
+        for(Position p: positions){
+            if(this.equals(p)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Position minus(Position pos) {
