@@ -27,8 +27,12 @@ class MainService {
         return axios.post(MAIN_API_BASE_URL + "/play/" + gameId, draw, { headers: this.authHeader() })
     }
 
-    pieceData(pieceId) {
-        return axios.get(MAIN_API_BASE_URL + "/piece/" + pieceId);
+    generatePiece(seed) {
+        return axios.get(MAIN_API_BASE_URL + "/generatepiece/" + seed);
+    }
+
+    findPiece(serial) {
+        return axios.get(MAIN_API_BASE_URL + "/findpiece/" + serial);
     }
 
     authHeader() {

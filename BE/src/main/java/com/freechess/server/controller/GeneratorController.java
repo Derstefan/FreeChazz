@@ -3,6 +3,7 @@ package com.freechess.server.controller;
 
 import com.freechess.game.pieces.IPieceType;
 import com.freechess.game.pieces.impl.PieceType;
+import com.freechess.generators.piece.PieceTypeGeneratorParam;
 import com.freechess.generators.piece.impl.PieceTypeGeneratorPool;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +14,23 @@ import org.springframework.web.bind.annotation.*;
 public class GeneratorController {
 
     // generate piece
-    @GetMapping("piece/{pieceId}")
-    public ResponseEntity<IPieceType> getPiece(@PathVariable long pieceId){
+    @GetMapping("generatepiece/{seed}")
+    public ResponseEntity<IPieceType> getPiece(@PathVariable String seed){
 
-        IPieceType pieceType = new PieceTypeGeneratorPool().generate(pieceId);
+        IPieceType pieceType = new PieceTypeGeneratorPool().generate(new PieceTypeGeneratorParam(seed));
+        System.out.println(seed + " -> " +pieceType.getSerial());
         return ResponseEntity.ok(pieceType);
     }
 
+    @GetMapping("findpiece/{pieceSerial}")
+    public ResponseEntity<IPieceType> getPieceBySerial(@PathVariable String pieceSerial){
+        try{
+            IPieceType pieceType = PieceType.getInstance(pieceSerial);
+            return ResponseEntity.ok(pieceType);
+        } catch(Exception e){
+
+        }
+        return (ResponseEntity<IPieceType>) ResponseEntity.badRequest();
+
+    }
 }

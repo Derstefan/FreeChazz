@@ -8,6 +8,7 @@ import com.freechess.game.pieces.IPieceType;
 import com.freechess.game.pieces.Piece;
 import com.freechess.game.player.EPlayer;
 import com.freechess.generators.board.BoardGenerator;
+import com.freechess.generators.piece.PieceTypeGeneratorParam;
 import com.freechess.generators.piece.impl.PieceTypeGeneratorPool;
 
 import java.util.*;
@@ -24,6 +25,7 @@ public class SymmetricBoardGenerator implements BoardGenerator {
     private long seed;
     private HashMap<Integer, Set<IPieceType>> piecePool = new HashMap<>();
     private BoardBuilder builder;
+
 
     public SymmetricBoardGenerator() {
         this.seed = (long) (Math.random() * Long.MAX_VALUE);
@@ -111,7 +113,8 @@ public class SymmetricBoardGenerator implements BoardGenerator {
     }
 
     private IPieceType generateRandomPieceType(int lvl){
-        return generator.generate(lvl,rand.nextLong()/10);
+        IPieceType pieceType = generator.generate(new PieceTypeGeneratorParam(lvl,rand.nextLong()));
+        return pieceType;
     }
 
 }

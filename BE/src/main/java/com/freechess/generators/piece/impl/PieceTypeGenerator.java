@@ -7,18 +7,41 @@ import com.freechess.game.pieces.impl.PieceType;
 import com.freechess.game.board.Position;
 import com.freechess.game.pieces.impl.PieceTypeBuilder;
 import com.freechess.generators.piece.IPieceTypeGenerator;
+import com.freechess.generators.piece.PieceTypeGeneratorParam;
 
 import java.util.*;
 
 public class PieceTypeGenerator implements IPieceTypeGenerator {
 
-    private GenConfig gc = new GenConfig();
+    private GenConfig gc;
     private Random rand;
     private long seed;
     private int lvl = 0;
 
 
-    public PieceType generate(int lvl, long seed){
+
+    public PieceType generate(PieceTypeGeneratorParam param){
+        if(param.getSeed()==null){
+            rand = new Random();
+        } else {
+            seed = param.getSeed();
+            rand = new Random(seed);
+        }
+
+        if(param.getLvl()==null){
+            lvl=rand.nextInt(5);
+        } else {
+            lvl=param.getLvl().intValue();
+
+        }
+        gc = new GenConfig(lvl);
+        return generate();
+    }
+
+
+
+
+ /*   public PieceType generate(int lvl, long seed){
         String str = String.valueOf(seed);
         this.lvl = lvl;
         gc.setLvl(lvl);
@@ -34,12 +57,12 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
         this.seed = Long.valueOf(str.substring(1));
         rand = new Random(seed);
         return generate();
-    }
+    }*/
 
     private PieceType generate() {
 
         ActionMap map = generateActions();
-        PieceType piece = new PieceTypeBuilder().symbol("P").actions(map).build();
+        PieceType piece = new PieceTypeBuilder().actions(map).build();
         /*char[][] moves = new char[2 * DISTANCE_WSKS.size() + 1][2 * DISTANCE_WSKS.size() + 1];
         for (int i = 0; i < moves.length; i++) {
             for (int j = 0; j < moves[0].length; j++) {

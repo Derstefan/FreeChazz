@@ -5,13 +5,16 @@ import com.freechess.game.board.Position;
 import com.freechess.game.player.EPlayer;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 public class Piece {
 
+    private int id; //for piece
 
-    private String symbol;
+
     private IPieceType pieceType;
+
 
     private EPlayer owner;
     private ArrayList<Position> possibleMoves = new ArrayList<>();
@@ -20,7 +23,6 @@ public class Piece {
     public Piece(EPlayer owner, IPieceType pieceType){
         this.owner = owner;
         this.pieceType = pieceType;
-        this.symbol = pieceType.getSymbol();
     }
 
     public void addPossibleMove(Position move){
@@ -35,12 +37,24 @@ public class Piece {
         return owner;
     }
 
-    public String getSymbol() {
-        return symbol;
+    public int getId() {
+        return id;
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getSymbol() {
+        return pieceType.getSymbol();
+    }
+
+    public String getSeed(){
+        return  pieceType.getSeed();
+    }
+
+    public String getSerial() {
+        return pieceType.getSerial();
     }
 
     @JsonIgnore

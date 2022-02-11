@@ -3,7 +3,6 @@ package com.freechess.game.pieces.impl;
 import com.freechess.game.actions.Action;
 import com.freechess.game.board.Position;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +13,9 @@ import java.util.Set;
     ToDo: mehrere Actions pro feld möglich? erstmal lieber nein!
  */
 public class ActionMap {
+    public static final int width = 7;
+    public static final int height = 7;
+
 
     private Map<Position, Action> actions = new HashMap<>();
 
@@ -53,21 +55,20 @@ public class ActionMap {
     }*/
 
     //zur serialisierung gleich ein array
+    //TODO: zur optimierung vll eine liste?
     public String[][] getActions(){
-        int w = 7;
-        int h = 7;
 
-        String[][] moves = new String[2*w+1][2*h+1];
+        String[][] moves = new String[2* width +1][2* height +1];
         for (int i = 0; i < moves.length; i++) {
         for (int j = 0; j < moves.length; j++) {
             moves[i][j] = "-";
-            if (i == w && j == h) {
+            if (i == width && j == height) {
                 moves[i][j] = "P";
             }
         }
     }
         for (Position pos : actions.keySet()) {
-        moves[pos.getX() + w][pos.getY() + h] = ""+actions.get(pos).getSymbol();
+        moves[pos.getX() + width][pos.getY() + height] = ""+actions.get(pos).getSymbol();
     }
         return moves;
     }

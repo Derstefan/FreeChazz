@@ -6,10 +6,14 @@ import com.freechess.game.pieces.impl.PieceTypeBuilder;
 
 public class PieceTypeHelper {
 
+
+
     public static PieceType CROSS1 = new PieceTypeBuilder().symbol("M")
             .action(2,0, Actions.MOVE_OR_ATTACK_ACTION)
             .action(0,2,Actions.MOVE_OR_ATTACK_ACTION)
             .action(-2,0,Actions.MOVE_OR_ATTACK_ACTION)
             .action(0,-2,Actions.MOVE_OR_ATTACK_ACTION)
             .build();
+
+    public static String PIECETYPE_ID = "P;X,2,0;X,-2,0;X,2,2;X,-2,2;";
 }

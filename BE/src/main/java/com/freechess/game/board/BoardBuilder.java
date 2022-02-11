@@ -1,11 +1,8 @@
 package com.freechess.game.board;
 
 
-import com.freechess.game.exception.BoardBuilderException;
 import com.freechess.game.pieces.Piece;
-import com.freechess.game.pieces.impl.PieceType;
 import com.freechess.game.player.EPlayer;
-
 import java.util.HashMap;
 
 public class BoardBuilder {
@@ -16,6 +13,8 @@ public class BoardBuilder {
     //for validatation
     private boolean king1Set = false;
     private boolean king2Set = false;
+    private int idCounter = 0;
+
 
 
     public BoardBuilder(int width,int height){
@@ -26,6 +25,8 @@ public class BoardBuilder {
     }
 
     public void putPiece(Piece piece, Position pos){
+        piece.setId(idCounter);
+        idCounter++;
         board.addPiece(piece,pos);
     }
 

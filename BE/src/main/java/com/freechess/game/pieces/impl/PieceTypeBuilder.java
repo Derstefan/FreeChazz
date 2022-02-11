@@ -21,7 +21,7 @@ public class PieceTypeBuilder {
     }
 
     public PieceTypeBuilder action(final Position pos,final Action action){
-        pieceType.getActions().put(pos,action);
+        pieceType.getActionMap().put(pos,action);
         return this;
     }
 
@@ -31,7 +31,7 @@ public class PieceTypeBuilder {
     }
 
     public PieceTypeBuilder actions(final ActionMap actionMap){
-        pieceType.setActions(actionMap);
+        pieceType.setActionMap(actionMap);
         return this;
     }
 
