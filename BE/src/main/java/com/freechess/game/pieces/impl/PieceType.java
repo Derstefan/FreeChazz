@@ -15,7 +15,9 @@ import java.util.Scanner;
 
 public class PieceType implements IPieceType {
 
-    private String symbol = "X";
+    private String symbol = "X";// for pieceType
+    private String serial;// for piecetype
+    private String seed = null;
 
     private ActionMap actions = new ActionMap();
 
@@ -98,7 +100,7 @@ public class PieceType implements IPieceType {
     public String getSymbol() {
         return symbol;
     }
-
+    @Override
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
@@ -109,6 +111,15 @@ public class PieceType implements IPieceType {
             id += actions.get(p).getSymbol() + "," + p.getX() + "," +p.getY() + ";";
         }
         return id;
+    }
+
+    @Override
+    public String getSeed() {
+        return seed;
+    }
+
+    public void setSeed(String seed) {
+        this.seed = seed;
     }
 
     @Override

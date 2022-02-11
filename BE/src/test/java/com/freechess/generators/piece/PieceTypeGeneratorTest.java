@@ -14,8 +14,8 @@ public class PieceTypeGeneratorTest {
     public void shouldGeneratePieceType(){
         PieceTypeGeneratorPool gen = new PieceTypeGeneratorPool();
         Random rand = new Random();
-        IPieceType p1 = gen.generate(1,rand.nextLong()/10);
-        IPieceType p2 = gen.generate(rand.nextLong());
+        IPieceType p1 = gen.generate(new PieceTypeGeneratorParam(1,rand.nextLong()));
+        IPieceType p2 = gen.generate(new PieceTypeGeneratorParam(rand.nextLong()));
 
         assertThat(p1).isNotNull();
         assertThat(p2).isNotNull();

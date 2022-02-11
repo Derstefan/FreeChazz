@@ -22,8 +22,8 @@ public class GenConfig {
     public double FREE_FIELD_MOVE_WSK = 0.1f;
     public double BOTH_MOVE_WSK = 0.8f;
 
-    public GenConfig() {
-
+    public GenConfig(int lvl) {
+setLvl(lvl);
 /*        addPositionWskAtY(2,Arrays.asList(0.1, 0.07, 0.06));
         addPositionWskAtY(1,Arrays.asList(0.2, 0.2, 0.07));
         addPositionWskAtY(0,Arrays.asList(0.0, 0.2, 0.1));*/
@@ -62,7 +62,7 @@ public class GenConfig {
                 addPositionWskAtY(2,Arrays.asList(0.15, 0.09, 0.07));
                 addPositionWskAtY(1,Arrays.asList(0.15, 0.15, 0.09));
                 addPositionWskAtY(0,Arrays.asList(0.0, 0.15, 0.15));
-                CIRCLES_WSKS = Arrays.asList(0.0, 0.1);
+                CIRCLES_WSKS = Arrays.asList(0.0, 1.0);
 
                 MIRROR2_WSK = 0.4f;
                 MIRROR4_WSK = 0.6f;

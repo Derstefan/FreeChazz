@@ -24,7 +24,7 @@ class GameComponent extends Component {
             player2: {},
             width: 16,
             height: 16,
-            pieces: {}, // images of pieces
+            pieceImagesSmall: {}, // images of pieces
 
             //pieceData for cards
             pieceImages: {}, //cardImages of pieces
@@ -41,6 +41,7 @@ class GameComponent extends Component {
             //selection
             selectedField: {},
             possibleMoves: [],
+            selectedPiece: {},
             pieceId: "",
         }
         this.selectField = this.selectField.bind(this);
@@ -91,31 +92,26 @@ class GameComponent extends Component {
         const { gameId } = this.state;
         mainService.getBoard(gameId).then((res) => {
             let bv = this.createBoard(res.data.board);
-            console.log(bv)
-            var pieces = new Map();
+            var pieceImagesSmall = new Map();
             var actions = new Map();
             var pieceImages = new Map();
             for (let i = 0; i < bv.length; i++) {
                 for (let j = 0; j < bv[0].length; j++) {
-                    if (bv[i][j].symbol !== "" && pieces.get(bv[i][j].symbol) === undefined) {
-                        var pg = new PieceGenerator(Config.squareSize * 0.8, Config.squareSize * 0.95, bv[i][j].symbol);
-                        pieces.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner));
+                    if (bv[i][j].symbol !== "" && pieceImagesSmall.get(bv[i][j].symbol) === undefined) {
+                        var pg = new PieceGenerator(Config.squareSize * 0.8, Config.squareSize * 0.95, bv[i][j].seed);
+                        pieceImagesSmall.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner));
 
-                        //TODO: load actionsdata
-
-                        mainService.pieceData(bv[i][j].symbol).then(res2 => {
-                            console.log(res2.data);
-                            var pg = new PieceGenerator(100, 120, "" + bv[i][j].symbol);
+                        mainService.generatePiece(bv[i][j].seed).then(res2 => {
+                            var pg = new PieceGenerator(100, 120, "" + bv[i][j].seed);
                             pieceImages.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner))
-                            actions.set(bv[i][j].symbol, res2.data);
+                            actions.set(bv[i][j].symbol, res2.data.actionMap.actions);
                         });
-
-
                     }
                 }
             }
+            //TODO: alternativer RestRequest um gleich alle pieceData zu bekommen
 
-            this.setState({ pieces: pieces, actions: actions, pieceImages: pieceImages, isInited: true, boardView: bv, width: bv[0].length, height: bv.length });
+            this.setState({ pieceImagesSmall: pieceImagesSmall, actions: actions, pieceImages: pieceImages, isInited: true, boardView: bv, width: bv[0].length, height: bv.length });
         });
     }
 
@@ -132,20 +128,23 @@ class GameComponent extends Component {
     // save Board data
     createBoard(board) {
         let bv = board;
-        console.log(bv);
+
         for (let i = 0; i < bv.length; i++) {
             for (let j = 0; j < bv[0].length; j++) {
                 if (board[i][j] === null) {
                     bv[i][j] = {
                         symbol: "",
                         owner: "",
-                        possibleMoves: []
+                        possibleMoves: [],
+                        serial: ""
                     };
                 } else {
                     bv[i][j] = {
                         symbol: bv[i][j].symbol,
                         owner: bv[i][j].owner,
-                        possibleMoves: bv[i][j].possibleMoves
+                        possibleMoves: bv[i][j].possibleMoves,
+                        serial: bv[i][j].serial,
+                        seed: bv[i][j].seed
                     };
                 }
             }
@@ -190,7 +189,8 @@ class GameComponent extends Component {
                 this.setState({
                     possibleMoves: boardView[y][x].possibleMoves,
                     selectedField: { x: x, y: y },
-                    pieceId: boardView[y][x].symbol
+                    selectedPiece: boardView[y][x],
+                    pieceId: boardView[y][x].symbol //TODO: statt symbol pieceId
                 });
             }
         } else {
@@ -199,7 +199,8 @@ class GameComponent extends Component {
                 this.setState({
                     possibleMoves: boardView[y][x].possibleMoves,
                     selectedField: { x: x, y: y },
-                    pieceId: boardView[y][x].symbol
+                    selectedPiece: boardView[y][x],
+                    pieceId: boardView[y][x].symbol//TODO: statt symbol pieceId
                 });
             }
         }
@@ -234,7 +235,7 @@ class GameComponent extends Component {
     }
 
     drawMethod() {
-        const { width, height, boardView, possibleMoves, selectedField, me, pieces, isInited, winner, pieceId, pieceCard, actions, pieceImages } = this.state;
+        const { width, height, boardView, possibleMoves, selectedField, me, pieceImagesSmall, isInited, winner, pieceId, selectedPiece, pieceCard, actions, pieceImages } = this.state;
 
 
         const draw = (ctx, frameCount) => {
@@ -247,8 +248,9 @@ class GameComponent extends Component {
                 ctx.canvas.height = squareSize * (height + 1);
 
                 //draw card
+
                 if (pieceId !== "") {
-                    ctx.drawImage(pieceCard.drawPieceCard(actions.get(pieceId), pieceImages.get(pieceId)), squareSize * (width + 1), 0);
+                    ctx.drawImage(pieceCard.drawPieceCard(actions.get(pieceId), pieceImages.get(pieceId), selectedPiece.owner), squareSize * (width + 1), 0);
                 }
 
                 //draw board
@@ -288,10 +290,10 @@ class GameComponent extends Component {
 
                                 let xOffset = boardTopx + (i + 0.115) * squareSize;
                                 let yOffset = boardTopy + (j + 0.05) * squareSize;
-                                if (pieces.length !== 0) {
+                                if (pieceImagesSmall.length !== 0) {
                                     //  console.log(pieces);
 
-                                    ctx.drawImage(pieces.get(boardView[j][i].symbol), xOffset, yOffset);
+                                    ctx.drawImage(pieceImagesSmall.get(boardView[j][i].symbol), xOffset, yOffset);
                                 }
                                 //}
 

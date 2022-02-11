@@ -14,6 +14,10 @@ public interface IPieceType {
 
     public abstract String getSymbol();
 
+    public abstract void setSymbol(String symbol);
+
+    public abstract String getSeed();
+
     //TODO: maybe better "serilizer"?
     public abstract String getSerial();
 }

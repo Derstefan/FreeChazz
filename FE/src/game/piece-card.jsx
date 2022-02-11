@@ -9,38 +9,63 @@ class PieceCard {
         this.canvas.height = Config.card.height;
     }
 
-    drawCanvas(piece, pieceImage) {
+    drawCanvas(actions, pieceImage, owner) {
         const actionsSize = Config.card.actionsSize;
         const actionsOffsetX = Config.card.actionsOffsetX;
         const actionsOffsetY = Config.card.actionsOffsetY;
         var ctx = this.ctx;
 
-        if (piece.actionMap !== undefined) {
+        if (actions !== undefined) {
             ctx.canvas.width = Config.card.width;
             ctx.canvas.height = Config.card.height;
 
             ctx.drawImage(pieceImage, 32, 10);
-            const actions = piece.actionMap.actions;
+
             // draw actions
-            for (var i = 0; i < actions.length; i++) {
-                for (var j = 0; j < actions[0].length; j++) {
-                    if (actions[i][j] !== "-") {
-                        if (actions[i][j] === "P") {
-                            ctx.fillStyle = "#11AA11";
-                            ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
-                        } else if (actions[i][j] === "E") {
-                            ctx.fillStyle = "#BB1111";
-                            ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
-                        } else if (actions[i][j] === "F") {
-                            ctx.fillStyle = "#1111BB";
-                            ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
-                        } else {
-                            ctx.fillStyle = "#666666";
-                            ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
+
+            if (owner === "P1") {
+                for (var i = 0; i < actions.length; i++) {
+                    for (var j = 0; j < actions[0].length; j++) {
+
+                        if (actions[i][j] !== "-") {
+                            if (actions[i][j] === "P") {
+                                ctx.fillStyle = "#11AA11";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + (actions[0].length - 1 - j) * actionsSize, actionsSize, actionsSize);
+                            } else if (actions[i][j] === "E") {
+                                ctx.fillStyle = "#BB1111";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + (actions[0].length - 1 - j) * actionsSize, actionsSize, actionsSize);
+                            } else if (actions[i][j] === "F") {
+                                ctx.fillStyle = "#1111BB";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + (actions[0].length - 1 - j) * actionsSize, actionsSize, actionsSize);
+                            } else {
+                                ctx.fillStyle = "#666666";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + (actions[0].length - 1 - j) * actionsSize, actionsSize, actionsSize);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (var i = 0; i < actions.length; i++) {
+                    for (var j = 0; j < actions[0].length; j++) {
+                        if (actions[i][j] !== "-") {
+                            if (actions[i][j] === "P") {
+                                ctx.fillStyle = "#11AA11";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
+                            } else if (actions[i][j] === "E") {
+                                ctx.fillStyle = "#BB1111";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
+                            } else if (actions[i][j] === "F") {
+                                ctx.fillStyle = "#1111BB";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
+                            } else {
+                                ctx.fillStyle = "#666666";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
+                            }
                         }
                     }
                 }
             }
+
 
             ctx.lineWidth = 0.5;
             ctx.strokeStyle = "#AAAAAA";
@@ -61,8 +86,8 @@ class PieceCard {
         }
     }
 
-    drawPieceCard(piece, pieceImage) {
-        this.drawCanvas(piece, pieceImage);
+    drawPieceCard(actions, pieceImage, owner) {
+        this.drawCanvas(actions, pieceImage, owner);
         return (
             this.canvas
         );

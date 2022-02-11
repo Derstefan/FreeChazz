@@ -40,7 +40,7 @@ class PieceCardComponent extends Component {
         console.log("pieceId ", pieceId);
         if (pieceId) {
             if (pieceId !== "") {
-                mainService.pieceData(pieceId).then(res => {
+                mainService.generatePiece(pieceId).then(res => {
                     var pg = new PieceGenerator(100, 120, "" + pieceId);
                     this.setState({
                         piece: res.data,
