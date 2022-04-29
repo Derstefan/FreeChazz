@@ -18,7 +18,6 @@ public class GeneratorController {
     public ResponseEntity<IPieceType> getPiece(@PathVariable String seed){
 
         IPieceType pieceType = new PieceTypeGeneratorPool().generate(new PieceTypeGeneratorParam(seed));
-        System.out.println(seed + " -> " +pieceType.getSerial());
         return ResponseEntity.ok(pieceType);
     }
 

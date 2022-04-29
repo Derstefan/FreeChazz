@@ -18,8 +18,8 @@ public class SymmetricBoardGenerator implements BoardGenerator {
     private static final int MAX_LVL = 5;
     private static final int POOL_SIZE = 5;
 
-    private static final int DEFAULT_WIDTH = 20;
-    private static final int DEFAULT_HEIGHT = 20;
+    private static final int DEFAULT_WIDTH = 15;
+    private static final int DEFAULT_HEIGHT = 15;
 
     private Random rand;
     private long seed;
@@ -102,10 +102,10 @@ public class SymmetricBoardGenerator implements BoardGenerator {
         for (int i = 0; i < positions.size(); i++) {
             IPieceType eType = GenUtil.getRandomEntryOf(pieces,this.rand);
 
-            Piece p = new Piece(EPlayer.P1, eType);
+            Piece p = new Piece(EPlayer.P2, eType);
             builder.putPiece(p, positions.get(i));
             if (mirrored) {
-                Piece p2 = new Piece(EPlayer.P2, eType);
+                Piece p2 = new Piece(EPlayer.P1, eType);
                 Position inverse = new Position(builder.getWidth() - 1 - positions.get(i).getX(), builder.getHeight() - 1 - positions.get(i).getY());
                 builder.putPiece(p2, inverse);
             }

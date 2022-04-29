@@ -6,7 +6,7 @@ class RandomGenerator extends Component {
     constructor(str) {
         super();
         this.tempSeed = this.hash(str);
-        console.log(this.tempSeed);
+        // console.log(this.tempSeed);
         // console.log("str=", str, "seed=", this.tempSeed);
     }
 

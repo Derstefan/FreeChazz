@@ -15,6 +15,8 @@ public class Piece {
 
     private IPieceType pieceType;
 
+    private Position position;
+
 
     private EPlayer owner;
     private ArrayList<Position> possibleMoves = new ArrayList<>();
@@ -55,6 +57,15 @@ public class Piece {
 
     public String getSerial() {
         return pieceType.getSerial();
+    }
+
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
     @JsonIgnore
