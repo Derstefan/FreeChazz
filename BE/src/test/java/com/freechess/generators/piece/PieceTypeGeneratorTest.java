@@ -16,9 +16,11 @@ public class PieceTypeGeneratorTest {
         Random rand = new Random();
         IPieceType p1 = gen.generate(new PieceTypeGeneratorParam(1,rand.nextLong()));
         IPieceType p2 = gen.generate(new PieceTypeGeneratorParam(rand.nextLong()));
+        IPieceType p3 = gen.generate(new PieceTypeGeneratorParam("2,1238921738129837"));
+
 
         assertThat(p1).isNotNull();
         assertThat(p2).isNotNull();
-
+        assertThat(p3).isNotNull();
     }
 }

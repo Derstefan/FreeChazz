@@ -54,7 +54,9 @@ public class Game {
         if(board.getWinner().isPresent()){
             return;
         }
+
         Piece piece = board.pieceAt(fromPos);
+
         // is it this players turn?
         if(piece.getOwner().equals(playersTurn)){
             // is it possible move??

@@ -74,6 +74,7 @@ public class Board {
         if(getWinner().isPresent()){
             return;
         }
+        piece.setPosition(pos);
         board[pos.getY()][pos.getX()] = piece;
     }
 

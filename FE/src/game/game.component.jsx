@@ -4,7 +4,9 @@ import Canvas from '../components/canvas.component';
 import PieceGenerator from '../components/generator/piece-generator';
 import PieceCard from './piece-card';
 import Config from "./config.json";
+import RenderFunctions from "./render-functions.js";
 import serverConfig from "../services/server-config.json";
+import { Engine, Runner, Composite, Bodies, Body } from 'matter-js';
 
 
 class GameComponent extends Component {
@@ -18,6 +20,7 @@ class GameComponent extends Component {
 
             //updater
             isInited: false,
+
 
             //game consts
             player1: {},
@@ -37,19 +40,36 @@ class GameComponent extends Component {
             turn: "undef",
             round: 0,
             winner: null,
+            graveyard: [],
 
             //selection
             selectedField: {},
-            possibleMoves: [],
             selectedPiece: {},
             pieceId: "",
+
+
+            //animation with matter.js
+            engine: Engine.create(),
+            matterBodies: [],
+            showAnimation: false,
+
+
         }
+
+        //matter.js init
+        //start matter.js runner
+        Runner.run(Runner.create(), this.state.engine);
+
+        //this.state.engine.gravity.scale = 0.00;
+        this.state.engine.gravity.y = 0.8;
+
         this.selectField = this.selectField.bind(this);
         this.clickOnCanvas = this.clickOnCanvas.bind(this);
         this.drawMethod = this.drawMethod.bind(this);
         this.play = this.play.bind(this);
         this.loadBoard = this.loadBoard.bind(this);
         this.loadPieceData = this.loadPieceData.bind(this);
+        this.createMatterBodies = this.createMatterBodies.bind(this);
 
     }
 
@@ -72,8 +92,6 @@ class GameComponent extends Component {
     updateGameData() {
         const { gameId, turn } = this.state;
         mainService.getGameData(gameId).then((res) => {
-
-
 
             this.setState({ player1: res.data.player1, player2: res.data.player2, turn: res.data.turn, round: res.data.round, winner: res.data.winner });
             //when other player made his turn
@@ -98,11 +116,11 @@ class GameComponent extends Component {
             for (let i = 0; i < bv.length; i++) {
                 for (let j = 0; j < bv[0].length; j++) {
                     if (bv[i][j].symbol !== "" && pieceImagesSmall.get(bv[i][j].symbol) === undefined) {
-                        var pg = new PieceGenerator(Config.squareSize * 0.8, Config.squareSize * 0.95, bv[i][j].seed);
+                        var pg = new PieceGenerator(Config.squareSize * Config.board.smallImage.wScale, Config.squareSize * Config.board.smallImage.hScale, bv[i][j].seed);
                         pieceImagesSmall.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner));
 
                         mainService.generatePiece(bv[i][j].seed).then(res2 => {
-                            var pg = new PieceGenerator(100, 120, "" + bv[i][j].seed);
+                            var pg = new PieceGenerator(Config.card.imageWidth, Config.card.imageHeight, "" + bv[i][j].seed);
                             pieceImages.set(bv[i][j].symbol, pg.drawPieceCanvas(bv[i][j].owner))
                             actions.set(bv[i][j].symbol, res2.data.actionMap.actions);
                         });
@@ -117,11 +135,56 @@ class GameComponent extends Component {
 
     //update Board
     loadBoard() {
-        const { gameId } = this.state;
+        const { gameId, graveyard, engine, matterBodies, showAnimation } = this.state;
+        var matterBodiesUpdate = matterBodies;
         mainService.getBoard(gameId).then((res) => {
+            //List of deleted pieces TODO: what is if page reloaded and graveyard at first empty -> many animations at start ?
+
+            let deletedPieces = res.data.graveyard.slice(graveyard.length, res.data.graveyard.size);
+
+            //matter bodies create, add forces and composite
+            if (showAnimation) {
+                if (deletedPieces.length !== 0) {
+                    this.createMatterBodies(deletedPieces).forEach(b => {
+                        Composite.add(engine.world, b.body);
+                        matterBodiesUpdate.push(b);
+                    });
+                }
+            } else {
+                this.setState({ showAnimation: true });
+            }
+
+
+            //  let bodyList = this.createMatterBodies(deletedPieces);
+            //            console.log(bodyList.length);
+            // console.log(Composite.allBodies(engine.world));
+
+
+
             let bv = this.createBoard(res.data.board);
-            this.setState({ boardData: res.data, boardView: bv, width: bv[0].length, height: bv.length });
+            this.setState({ boardData: res.data, boardView: bv, graveyard: res.data.graveyard, matterBodies: matterBodiesUpdate, width: bv[0].length, height: bv.length });
         });
+    }
+
+    createMatterBodies(deletedPieces) {
+        const { width, engine } = this.state;
+        var matterBodies = [];
+        deletedPieces.forEach(piece => {
+            //create body
+            var pg = new PieceGenerator(Config.squareSize * Config.board.smallImage.wScale, Config.squareSize * Config.board.smallImage.hScale, piece.seed);
+            let xOffsetPic = Config.boardTopx + (piece.position.x + Config.board.smallImage.xOffset) * Config.squareSize;
+            let yOffsetPic = Config.boardTopy + (piece.position.y + Config.board.smallImage.yOffset) * Config.squareSize;
+
+            pg.getMatterBodies().forEach(b => {
+                Body.translate(b.body, { x: xOffsetPic, y: yOffsetPic });
+                matterBodies.push(b);
+            });
+            var ground = Bodies.rectangle(0, yOffsetPic + Config.squareSize * 0.7, 21300, 2, { isStatic: true });
+            matterBodies.push({ body: ground, color: "black", alpha: 1.0, visible: false });
+        });
+
+        return matterBodies;
+
     }
 
 
@@ -154,14 +217,14 @@ class GameComponent extends Component {
 
 
     selectField(x, y) {
-        const { boardView, selectedField, me, turn, possibleMoves } = this.state;
+        const { boardView, selectedField, me, turn, selectedPiece } = this.state;
         const isPlayerTurn = me === turn;
         const isEmptyField = boardView[y][x].symbol === "";
         const sthSelected = JSON.stringify(selectedField) !== "{}";
 
         if (sthSelected) {
             const isAlreadySelected = selectedField.x === x && selectedField.y === y;
-            const isPossibleMove = possibleMoves.some(move => move.x === x && move.y === y);
+            const isPossibleMove = selectedPiece.possibleMoves.some(move => move.x === x && move.y === y);
             const isOwnSelected = me === boardView[selectedField.y][selectedField.x].owner;
 
             // move,unselect, another select ?
@@ -169,7 +232,6 @@ class GameComponent extends Component {
             if (isAlreadySelected) {
                 // unselect
                 this.setState({
-                    possibleMoves: [],
                     selectedField: {},
                     pieceId: ""
                 });
@@ -180,14 +242,12 @@ class GameComponent extends Component {
             } else if (isEmptyField) {
                 // unselect
                 this.setState({
-                    possibleMoves: [],
                     selectedField: {},
                     pieceId: ""
                 });
             } else {
                 // select new position
                 this.setState({
-                    possibleMoves: boardView[y][x].possibleMoves,
                     selectedField: { x: x, y: y },
                     selectedPiece: boardView[y][x],
                     pieceId: boardView[y][x].symbol //TODO: statt symbol pieceId
@@ -197,10 +257,9 @@ class GameComponent extends Component {
             if (!isEmptyField) {
                 // select new position
                 this.setState({
-                    possibleMoves: boardView[y][x].possibleMoves,
                     selectedField: { x: x, y: y },
                     selectedPiece: boardView[y][x],
-                    pieceId: boardView[y][x].symbol//TODO: statt symbol pieceId
+                    pieceId: boardView[y][x].symbol //TODO: statt symbol pieceId
                 });
             }
         }
@@ -213,7 +272,6 @@ class GameComponent extends Component {
                 //            console.log("played", turn);
                 const nextTurn = (turn === "P1") ? "P2" : "P1";
                 this.setState({
-                    possibleMoves: [],
                     selectedField: {},
                     turn: nextTurn
                 });
@@ -235,7 +293,7 @@ class GameComponent extends Component {
     }
 
     drawMethod() {
-        const { width, height, boardView, possibleMoves, selectedField, me, pieceImagesSmall, isInited, winner, pieceId, selectedPiece, pieceCard, actions, pieceImages } = this.state;
+        const { width, height, boardView, selectedField, me, pieceImagesSmall, isInited, winner, pieceId, selectedPiece, pieceCard, actions, pieceImages, engine, matterBodies } = this.state;
 
 
         const draw = (ctx, frameCount) => {
@@ -248,28 +306,43 @@ class GameComponent extends Component {
                 ctx.canvas.height = squareSize * (height + 1);
 
                 //draw card
-
                 if (pieceId !== "") {
+                    var cardPicsize = Config.card.width;
+                    var grd = ctx.createRadialGradient(squareSize * (width + 1) + cardPicsize / 2, 0 + cardPicsize * 0.625, 2, squareSize * (width + 1) + cardPicsize / 2, 0 + cardPicsize * 0.625, cardPicsize * 0.5);
+                    grd.addColorStop(0, "black");
+                    if (selectedPiece.owner === me) {
+                        grd.addColorStop(1, "rgba(0,100,0,0.1)");
+                    } else {
+                        grd.addColorStop(1, "rgba(100,0,0,0.1)");
+                    }
+                    // Fill with gradient
+                    ctx.fillStyle = grd;
+                    ctx.fillRect(squareSize * (width + 1), + cardPicsize * 0.125, cardPicsize, cardPicsize);
+
                     ctx.drawImage(pieceCard.drawPieceCard(actions.get(pieceId), pieceImages.get(pieceId), selectedPiece.owner), squareSize * (width + 1), 0);
                 }
 
                 //draw board
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
-                        ctx.fillStyle = ((i + j) % 2 === 0) ? "#D2B48C" : "PeachPuff";
+                        ctx.fillStyle = ((i + j) % 2 === 0) ? Config.board.color1 : Config.board.color2;
                         let xOffset = boardTopx + j * squareSize;
                         let yOffset = boardTopy + i * squareSize;
                         ctx.fillRect(xOffset, yOffset, squareSize, squareSize);
                     }
                 }
+                // draw the border around the chessboard
+                ctx.strokeStyle = "black";
+                ctx.strokeRect(boardTopx, boardTopy, squareSize * width, squareSize * height)
+
 
                 if (JSON.stringify(selectedField) !== "{}") {
                     // draw moves
                     ctx.globalAlpha = 0.45;
                     ctx.fillStyle = (me === boardView[selectedField.y][selectedField.x].owner) ? "lightgreen" : "red";
-                    for (let k = 0; k < possibleMoves.length; k++) {
-                        let xOffset = boardTopx + possibleMoves[k].x * squareSize;
-                        let yOffset = boardTopy + possibleMoves[k].y * squareSize;
+                    for (let k = 0; k < selectedPiece.possibleMoves.length; k++) {
+                        let xOffset = boardTopx + selectedPiece.possibleMoves[k].x * squareSize;
+                        let yOffset = boardTopy + selectedPiece.possibleMoves[k].y * squareSize;
 
                         ctx.fillRect(xOffset, yOffset, squareSize, squareSize);
                     }
@@ -283,17 +356,33 @@ class GameComponent extends Component {
                 // draw pieces
                 if (boardView[0] && isInited) {
                     ctx.fillStyle = "black";
-                    ctx.font = "20px Arial";
+
                     for (let i = 0; i < width; i++) {
                         for (let j = 0; j < height; j++) {
                             if (boardView[j][i].symbol !== "") {
 
-                                let xOffset = boardTopx + (i + 0.115) * squareSize;
-                                let yOffset = boardTopy + (j + 0.05) * squareSize;
+                                let xOffset = boardTopx + i * squareSize;
+                                let yOffset = boardTopy + j * squareSize;
+                                let xOffsetPic = boardTopx + (i + Config.board.smallImage.xOffset) * squareSize;
+                                let yOffsetPic = boardTopy + (j + Config.board.smallImage.yOffset) * squareSize;
+
                                 if (pieceImagesSmall.length !== 0) {
                                     //  console.log(pieces);
 
-                                    ctx.drawImage(pieceImagesSmall.get(boardView[j][i].symbol), xOffset, yOffset);
+
+                                    //green or red shadow
+                                    var grd = ctx.createRadialGradient(xOffset + squareSize / 2, yOffset + squareSize * 0.6, 2, xOffset + squareSize / 2, yOffset + squareSize * 0.6, squareSize * 0.5);
+                                    grd.addColorStop(0, "black");
+                                    if (boardView[j][i].owner === me) {
+                                        grd.addColorStop(1, "rgba(0,100,0,0.1)");
+                                    } else {
+                                        grd.addColorStop(1, "rgba(100,0,0,0.1)");
+                                    }
+                                    // Fill with gradient
+                                    ctx.fillStyle = grd;
+                                    ctx.fillRect(xOffset, yOffset, squareSize, squareSize);
+
+                                    ctx.drawImage(pieceImagesSmall.get(boardView[j][i].symbol), xOffsetPic, yOffsetPic);
                                 }
                                 //}
 
@@ -302,10 +391,20 @@ class GameComponent extends Component {
                         }
                     }
                 }
+                //animation
+                //var bodies = Composite.allBodies(engine.world);
+                //
+                console.log("active bodies:", matterBodies.length);
+                if (matterBodies.length != 0) {
+                    RenderFunctions.renderMatterAnimation(ctx, matterBodies, frameCount);
+                    matterBodies.forEach(b => {
+                        if (b.alpha <= 0) {
+                            Composite.remove(engine.world, b.body);
+                            matterBodies.splice(matterBodies.indexOf(b), 1);
+                        }
+                    })
+                }
 
-                // draw the border around the chessboard
-                ctx.strokeStyle = "black";
-                ctx.strokeRect(boardTopx, boardTopy, squareSize * width, squareSize * height)
 
 
                 // draw winner

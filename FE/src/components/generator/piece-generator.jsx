@@ -1,11 +1,12 @@
 import { Component } from 'react'
 import RandomGenerator from './random-generator';
 import UtilFunctions from './util-functions';
+import { Bodies } from 'matter-js';
+//mport decomp from 'poly-decomp';
 
-class PieceGenerator extends Component {
+class PieceGenerator {
 
     constructor(width, height, seedstr) {
-        super();
         this.gen = new RandomGenerator(seedstr);
         this.width = width;
         this.height = height;
@@ -13,6 +14,7 @@ class PieceGenerator extends Component {
         this.c2 = this.canvas2.getContext('2d');
         this.canvas2.width = width;
         this.canvas2.height = height;
+        this.matterBodies = [];
     }
 
 
@@ -118,6 +120,13 @@ class PieceGenerator extends Component {
         this.c2.fill(this.drawShape(points));
         this.c2.fillStyle = color;
         this.c2.fill(this.drawMirrorShape(points));
+
+
+
+        this.addBodies(points, color);
+        var points2 = points;
+        points2.forEach(p => { p.x = this.width - p.x; });
+        this.addBodies(points2, color);
     }
 
     drawCurvedMirroredPolygonColorDiff() {
@@ -144,6 +153,29 @@ class PieceGenerator extends Component {
         this.c2.fill(this.drawShape(points));
         this.c2.fillStyle = color2;
         this.c2.fill(this.drawMirrorShape(points));
+
+        this.addBodies(points, color);
+        var points2 = points;
+        points2.forEach(p => { p.x = this.width - p.x; });
+        this.addBodies(points2, color2);
+    }
+
+    //sort points in y direction
+    sortPoints(points) {
+        return points.sort((a, b) => (a.y > b.y) ? 1 : -1);
+    }
+
+    addBodies(points, color) {
+        var pointList = this.sortPoints(points);
+        for (var i = 2; i < pointList.length; i++) {
+            var body = Bodies.fromVertices(0, 0, [points[i - 2], points[i - 1], points[i]]);
+            if (body.vertices.length >= 3) {
+                body.torque = 0.05;
+                this.matterBodies.push({ body: body, color: color, alpha: 1.0 });
+            }
+
+        }
+
     }
 
 
@@ -152,6 +184,10 @@ class PieceGenerator extends Component {
     }
 
 
+    getMatterBodies() {
+        this.drawPolygons(this.gen.randNumOfRange(3, 5));
+        return this.matterBodies;
+    }
 
     drawPieceCanvas(owner) {
 
