@@ -2,6 +2,7 @@ package com.freechess.server;
 
 import com.freechess.game.Game;
 import com.freechess.game.player.Player;
+import com.freechess.server.DTO.GameParams;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -17,6 +18,12 @@ public final class Server {
 
     public Game createGame() {
         Game game = new Game();
+        this.games.put(game.getGameId(), game);
+        return game;
+    }
+
+    public Game createGame(GameParams params) {
+        Game game = new Game(params);
         this.games.put(game.getGameId(), game);
         return game;
     }

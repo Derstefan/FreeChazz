@@ -7,6 +7,7 @@ import com.freechess.game.player.Player;
 import com.freechess.server.DTO.DrawData;
 import com.freechess.server.DTO.GameData;
 import com.freechess.game.board.Board;
+import com.freechess.server.DTO.GameParams;
 import com.freechess.server.DTO.JwtResponse;
 import com.freechess.server.security.JwtUtils;
 import com.freechess.server.Server;
@@ -31,6 +32,22 @@ public class GameController {
     @GetMapping("newgame/{name}")
     public ResponseEntity<JwtResponse> newGame(@PathVariable String name){
         Game game = server.createGame();
+        Player player1 = new Player(name, EPlayer.P1);
+        game.join(player1);
+
+        UUID playerId = player1.getPlayerId();
+        UUID gameId = game.getGameId();
+
+        //generate Security Token
+        String jwt = jwtUtils.generateJwtToken(playerId,gameId);
+        JwtResponse jwtResponse = new JwtResponse(gameId,playerId,jwt,EPlayer.P1);
+
+        return ResponseEntity.ok(jwtResponse);
+    }
+
+    @PostMapping("newgame/{name}")
+    public ResponseEntity<JwtResponse> newGame(@PathVariable String name,@RequestBody GameParams params){
+        Game game = server.createGame(params);
         Player player1 = new Player(name, EPlayer.P1);
         game.join(player1);
 

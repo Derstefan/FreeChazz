@@ -23,8 +23,9 @@ public class SymmetricBoardGenerator implements BoardGenerator {
 
     private Random rand;
     private long seed;
-    private HashMap<Integer, Set<IPieceType>> piecePool = new HashMap<>();
+    private HashMap<Integer, ArrayList<IPieceType>> piecePool = new HashMap<>();
     private BoardBuilder builder;
+    private PieceTypeGeneratorPool generator;
 
 
     public SymmetricBoardGenerator() {
@@ -37,6 +38,7 @@ public class SymmetricBoardGenerator implements BoardGenerator {
         this.seed = seed;
         rand = new Random(seed);
         generator = new PieceTypeGeneratorPool();
+        System.out.println("generate: " +seed);
     }
 
     public Board generate(){
@@ -58,12 +60,11 @@ public class SymmetricBoardGenerator implements BoardGenerator {
 
     }
 
-    private PieceTypeGeneratorPool generator;
 
 
     private void generatePiecePool() {
         for(int j =1;j<=MAX_LVL;j++){
-            piecePool.put(j, new HashSet<>());
+            piecePool.put(j, new ArrayList<>());
             for (int i = 0; i < POOL_SIZE; i++) {
                 piecePool.get(j).add(generateRandomPieceType(j));
             }
@@ -71,13 +72,13 @@ public class SymmetricBoardGenerator implements BoardGenerator {
     }
 
     private void putKing(EPlayer player) {
-        IPieceType kingType = generateRandomPieceType(2);
+        IPieceType kingType = generateRandomPieceType(4);
         Piece king = new Piece(player, kingType);
         Position pos;
         if(player.equals(EPlayer.P1)){
-            pos = new Position(builder.getWidth() / 2, 0);
-        } else {
             pos =new Position(builder.getWidth() / 2, builder.getHeight() - 1);
+        } else {
+            pos = new Position(builder.getWidth() / 2, 0);
         }
             builder.putKing(player,king,pos);
     }
@@ -94,13 +95,13 @@ public class SymmetricBoardGenerator implements BoardGenerator {
         if ((line != 1 && line != 2 && line != 3) || number <= 0) {
             return new ArrayList<Position>();
         }
-        return GenUtil.getRandomPosOfArea(0, builder.getWidth() - 1,  1/2*builder.getHeight() + line, 1/2*builder.getHeight() + 1 + line, number,this.rand);
+        return GenUtil.getRandomPosOfArea(0, builder.getWidth() - 1,  1/2*builder.getHeight() + line, 1/2*builder.getHeight() + 1 + line, number,rand);
     }
 
-    private void addPiecesToBoard(Set<IPieceType> pieces, ArrayList<Position> positions, boolean mirrored) {
+    private void addPiecesToBoard(ArrayList<IPieceType> pieces, ArrayList<Position> positions, boolean mirrored) {
 
         for (int i = 0; i < positions.size(); i++) {
-            IPieceType eType = GenUtil.getRandomEntryOf(pieces,this.rand);
+            IPieceType eType = GenUtil.getRandomEntryOf(pieces,rand);
 
             Piece p = new Piece(EPlayer.P2, eType);
             builder.putPiece(p, positions.get(i));

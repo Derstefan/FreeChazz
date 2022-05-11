@@ -3,6 +3,7 @@ package com.freechess.generators.board.impl;
 import com.freechess.game.board.Position;
 import com.freechess.game.pieces.IPieceType;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -34,7 +35,7 @@ public class GenUtil {
         return positions;
     }
 
-    public static IPieceType getRandomEntryOf(Set<IPieceType> pieceTypes, Random rand) {
+    public static IPieceType getRandomEntryOf(ArrayList<IPieceType> pieceTypes, Random rand) {
 
         int index = rand.nextInt(pieceTypes.size());
         Iterator<IPieceType> iter = pieceTypes.iterator();
