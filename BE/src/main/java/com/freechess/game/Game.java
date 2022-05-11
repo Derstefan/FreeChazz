@@ -7,6 +7,7 @@ import com.freechess.game.board.Position;
 import com.freechess.game.player.EPlayer;
 import com.freechess.game.player.Player;
 import com.freechess.generators.board.impl.SymmetricBoardGenerator;
+import com.freechess.server.DTO.GameParams;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -34,6 +35,13 @@ public class Game {
         board = gen.generate();
         playersTurn = diceStartPlayer();
 
+    }
+
+    public Game(GameParams params){
+        gameId = UUID.randomUUID();
+        SymmetricBoardGenerator gen = params.getSeed()!=null?new SymmetricBoardGenerator(params.getSeed()):new SymmetricBoardGenerator();
+        board = params.getESize()!=null?gen.generate(params.getESize().getSize(),params.getESize().getSize()):gen.generate();
+        playersTurn = diceStartPlayer();
     }
 
 

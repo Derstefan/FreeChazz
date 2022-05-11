@@ -61,7 +61,8 @@ class GameComponent extends Component {
         Runner.run(Runner.create(), this.state.engine);
 
         //this.state.engine.gravity.scale = 0.00;
-        this.state.engine.gravity.y = 0.8;
+        this.state.engine.gravity.y = 0.6;
+        this.state.engine.timing.timeScale = 0.8;
 
         this.selectField = this.selectField.bind(this);
         this.clickOnCanvas = this.clickOnCanvas.bind(this);
@@ -392,9 +393,7 @@ class GameComponent extends Component {
                     }
                 }
                 //animation
-                //var bodies = Composite.allBodies(engine.world);
-                //
-                console.log("active bodies:", matterBodies.length);
+                //console.log("active bodies:", matterBodies.length);
                 if (matterBodies.length != 0) {
                     RenderFunctions.renderMatterAnimation(ctx, matterBodies, frameCount);
                     matterBodies.forEach(b => {

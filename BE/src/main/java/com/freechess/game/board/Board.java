@@ -53,9 +53,9 @@ public class Board {
         }
         Piece p = pieceAt(pos);
         if(p.equals(king1)){
-            setWinner(king1.getOwner());
-        } else if(p.equals(king2)){
             setWinner(king2.getOwner());
+        } else if(p.equals(king2)){
+            setWinner(king1.getOwner());
         }
         graveyard.add(p);
 

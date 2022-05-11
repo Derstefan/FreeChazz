@@ -11,6 +11,10 @@ class MainService {
         return axios.get(MAIN_API_BASE_URL + "/newgame/" + name)
     }
 
+    startNewGameWithParams(name, params) {
+        return axios.post(MAIN_API_BASE_URL + "/newgame/" + name, params)
+    }
+
     joinGame(gameId, name) {
         return axios.get(MAIN_API_BASE_URL + "/joingame/" + gameId + "/" + name)
     }
