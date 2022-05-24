@@ -66,11 +66,11 @@ class StartComponent extends Component {
         const { name, seed, size } = this.state;
         return (
             <div>
-                <div className="m-5" >
+                <div className="m-5">
                     name:<input value={name} onChange={this.changeName} />
                 </div>
                 {this.state.isActive !== true && (<label onClick={this.handleShow}>more details...</label>)}
-                {this.state.isActive && <div id="params" >
+                {this.state.isActive && <div id="params">
 
                     <div className="m-5" >
                         seed:<input value={seed} onChange={this.changeSeed} />
@@ -86,9 +86,7 @@ class StartComponent extends Component {
                 </div>}
 
                 <div className="m-5" >
-
                     <button type="button" onClick={this.startGame}>new Game</button>
-
                 </div>
             </div>
         )

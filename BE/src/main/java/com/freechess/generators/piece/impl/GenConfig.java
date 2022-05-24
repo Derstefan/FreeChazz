@@ -22,9 +22,13 @@ public class GenConfig {
     public double FREE_FIELD_MOVE_WSK = 0.1f;
     public double BOTH_MOVE_WSK = 0.8f;
 
+    public List<Double> MOVE_PATTERN_NUMBER_WSKS = Arrays.asList(0.2,0.8);
+    public List<Double> MOVE_PATTERN_TYPE_WSKS = Arrays.asList(0.8,0.0666,0.0666,0.0667,0.0,0.0);
+    public List<Double> MOVE_PATTERN_LENGTH_WSKS = Arrays.asList(0.0,0.2,0.2,0.2,0.2,0.2);
+
     public GenConfig(int lvl) {
-setLvl(lvl);
-/*        addPositionWskAtY(2,Arrays.asList(0.1, 0.07, 0.06));
+        setLvl(lvl);
+/*      addPositionWskAtY(2,Arrays.asList(0.1, 0.07, 0.06));
         addPositionWskAtY(1,Arrays.asList(0.2, 0.2, 0.07));
         addPositionWskAtY(0,Arrays.asList(0.0, 0.2, 0.1));*/
 
@@ -36,10 +40,6 @@ setLvl(lvl);
           ----------
            0 1 2 3
          */
-
-
-
-
     }
 
     public void setLvl(int lvl) {
@@ -62,7 +62,7 @@ setLvl(lvl);
                 addPositionWskAtY(2,Arrays.asList(0.15, 0.09, 0.07));
                 addPositionWskAtY(1,Arrays.asList(0.15, 0.15, 0.09));
                 addPositionWskAtY(0,Arrays.asList(0.0, 0.15, 0.15));
-                CIRCLES_WSKS = Arrays.asList(0.0, 1.0);
+                CIRCLES_WSKS = Arrays.asList(0.0, 0.7,0.3);
 
                 MIRROR2_WSK = 0.4f;
                 MIRROR4_WSK = 0.6f;
@@ -92,7 +92,7 @@ setLvl(lvl);
                 addPositionWskAtY(2,Arrays.asList(0.066, 0.066, 0.066, 0.066));
                 addPositionWskAtY(1,Arrays.asList(0.066, 0.066, 0.066, 0.066));
                 addPositionWskAtY(0,Arrays.asList(0.0, 0.066, 0.066, 0.066));
-                CIRCLES_WSKS = Arrays.asList(0.0, 0.0, 0.0, 0.3, 0.4, 0.3);
+                CIRCLES_WSKS = Arrays.asList(0.0, 0.0, 0.0, 0.7, 0.3);
 
                 MIRROR2_WSK = 0.4f;
                 MIRROR4_WSK = 0.6f;
@@ -107,7 +107,7 @@ setLvl(lvl);
                 addPositionWskAtY(2, Arrays.asList(0.04, 0.04, 0.05, 0.04, 0.04));
                 addPositionWskAtY(1, Arrays.asList(0.05, 0.05, 0.04, 0.04, 0.04));
                 addPositionWskAtY(0, Arrays.asList(0.0, 0.05, 0.04, 0.04, 0.04));
-                CIRCLES_WSKS = Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.2, 0.3, 0.3, 0.2);
+                CIRCLES_WSKS = Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.6, 0.2);
 
                 MIRROR2_WSK = 0.4f;
                 MIRROR4_WSK = 0.6f;

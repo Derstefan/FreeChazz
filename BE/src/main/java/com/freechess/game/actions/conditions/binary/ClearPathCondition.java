@@ -23,16 +23,15 @@ public class ClearPathCondition extends Condition {
 
         int dy = (pos1.getY()-pos2.getY());
         int dx = (pos1.getX()-pos2.getX());
-        int l = Math.max(dy,dx);
+        int l = Math.max(Math.abs(dy),Math.abs(dx));
 
         int x = pos1.getX();
         int y = pos1.getY();
 
         for(int i=1;i<l;i++){
             x+=dx/l;
-            y+=dy/l;
+            y-=dy/l; //HERE is the minus!!!
             if(!board.isFree(x,y)){
-
                 return false;
             }
         }
