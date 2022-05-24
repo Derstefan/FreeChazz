@@ -115,11 +115,13 @@ public class Board {
     }
 
     public boolean isFree(int x,int y){
+        if(!isOnboard(new Position(x,y)))return true;
         if(board[y][x]==null){
             return true;
         }
         return false;
     }
+
 
 
 

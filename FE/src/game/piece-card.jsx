@@ -24,6 +24,7 @@ class PieceCard {
             // draw actions
 
             if (owner === "P1") {
+
                 for (var i = 0; i < actions.length; i++) {
                     for (var j = 0; j < actions[0].length; j++) {
 
@@ -36,6 +37,9 @@ class PieceCard {
                                 ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + (actions[0].length - 1 - j) * actionsSize, actionsSize, actionsSize);
                             } else if (actions[i][j] === "F") {
                                 ctx.fillStyle = "#1111BB";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + (actions[0].length - 1 - j) * actionsSize, actionsSize, actionsSize);
+                            } else if (actions[i][j] === "M") {
+                                ctx.fillStyle = "#11BBBB";
                                 ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + (actions[0].length - 1 - j) * actionsSize, actionsSize, actionsSize);
                             } else {
                                 ctx.fillStyle = "#666666";
@@ -56,6 +60,9 @@ class PieceCard {
                                 ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
                             } else if (actions[i][j] === "F") {
                                 ctx.fillStyle = "#1111BB";
+                                ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
+                            } else if (actions[i][j] === "M") {
+                                ctx.fillStyle = "#11BBBB";
                                 ctx.fillRect(actionsOffsetX + i * actionsSize, actionsOffsetY + j * actionsSize, actionsSize, actionsSize);
                             } else {
                                 ctx.fillStyle = "#666666";

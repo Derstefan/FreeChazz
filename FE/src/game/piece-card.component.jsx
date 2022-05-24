@@ -23,6 +23,7 @@ class PieceCardComponent extends Component {
 
             piece: {},
             pieceCard: new PieceCard(),
+            actions: {},
 
             //consts
             actionsSize: 9,
@@ -43,6 +44,7 @@ class PieceCardComponent extends Component {
                 mainService.generatePiece(pieceId).then(res => {
                     var pg = new PieceGenerator(100, 120, "" + pieceId);
                     this.setState({
+                        actions: res.data.actionMap.actions,
                         piece: res.data,
                         pieceImage: pg.drawPieceCanvas("P1")
                     });
@@ -68,12 +70,12 @@ class PieceCardComponent extends Component {
 
 
     drawCanvas() {
-        const { pieceCard, piece, pieceImage } = this.state;
+        const { pieceCard, piece, pieceImage, actions } = this.state;
 
         const draw = (ctx, frameCount) => {
             ctx.canvas.width = Config.card.width;
             ctx.canvas.height = Config.card.height;
-            ctx.drawImage(pieceCard.drawPieceCard(piece, pieceImage), 0, 0);
+            ctx.drawImage(pieceCard.drawPieceCard(actions, pieceImage), 0, 0);
         }
         return draw;
     }

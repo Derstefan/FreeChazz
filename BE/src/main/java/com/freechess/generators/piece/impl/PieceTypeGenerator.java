@@ -6,9 +6,11 @@ import com.freechess.game.pieces.impl.ActionMap;
 import com.freechess.game.pieces.impl.PieceType;
 import com.freechess.game.board.Position;
 import com.freechess.game.pieces.impl.PieceTypeBuilder;
+import com.freechess.game.player.EPlayer;
 import com.freechess.generators.piece.IPieceTypeGenerator;
 import com.freechess.generators.piece.PieceTypeGeneratorParam;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class PieceTypeGenerator implements IPieceTypeGenerator {
@@ -32,7 +34,6 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
             lvl=rand.nextInt(5);
         } else {
             lvl=param.getLvl().intValue();
-
         }
         gc = new GenConfig(lvl);
         return generate();
@@ -63,20 +64,6 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
 
         ActionMap map = generateActions();
         PieceType piece = new PieceTypeBuilder().actions(map).build();
-        /*char[][] moves = new char[2 * DISTANCE_WSKS.size() + 1][2 * DISTANCE_WSKS.size() + 1];
-        for (int i = 0; i < moves.length; i++) {
-            for (int j = 0; j < moves[0].length; j++) {
-                moves[i][j] = '-';
-                if (i == DISTANCE_WSKS.size() && j == DISTANCE_WSKS.size()) {
-                    moves[i][j] = 'P';
-                }
-            }
-        }
-        for (Position pos : map.keySet()) {
-            moves[pos.getX() + DISTANCE_WSKS.size()][pos.getY() + DISTANCE_WSKS.size()] = map.get(pos).name().charAt(0);
-        }
-        showMoves(moves);*/
-
 
 
         return piece;
@@ -85,34 +72,12 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
     private ActionMap generateActions() {
         ActionMap actions = new ActionMap();
 
-        int circleNumber = dice(gc.CIRCLES_WSKS);
-        //      System.out.println("circleNumber: " + circleNumber);
-        for (int i = 0; i < circleNumber; i++) {
-            //int x = dice(gc.DISTANCE_WSKS);
-            //int y = dice(gc.DISTANCE_WSKS);
+        generateJumpActions(actions);
+        generateWalkActions(actions);
 
-            Position p = dicePosition();
-
-            int x = p.getX();
-            int y = p.getY();
-
-            //System.out.println("x="+x+",y="+y);
-            Action type = generateActionType();
-            if (!(x == 0 && y == 0)) {
-                double mirrorWsk = rand.nextDouble();
-                if (mirrorWsk <= gc.MIRROR2_WSK) {
-                    addToMap(actions, getMirrors2(new Position(x, y)), type);
-                } else if (mirrorWsk - gc.MIRROR2_WSK <= gc.MIRROR4_WSK) {
-                    addToMap(actions, getMirrors4(new Position(x, y)), type);
-                } else {
-                    addToMap(actions, getMirrors8(new Position(x, y)), type);
-                }
-            } else {
-                i--; // TODO: Remove this
-            }
-        }
         return actions;
     }
+
 
 
     // array as list... input ?
@@ -166,6 +131,34 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
         }
     }
 
+//------------ jump actions ---------------------------------------------------
+
+    private void generateJumpActions(ActionMap actions){
+        int circleNumber = dice(gc.CIRCLES_WSKS);
+        for (int i = 0; i < circleNumber; i++) {
+            //int x = dice(gc.DISTANCE_WSKS);
+            //int y = dice(gc.DISTANCE_WSKS);
+
+            Position p = dicePosition();
+
+            int x = p.getX();
+            int y = p.getY();
+
+            Action type = generateActionType();
+            if (!(x == 0 && y == 0)) {
+                double mirrorWsk = rand.nextDouble();
+                if (mirrorWsk <= gc.MIRROR2_WSK) {
+                    addToMap(actions, getMirrors2(new Position(x, y)), type);
+                } else if (mirrorWsk - gc.MIRROR2_WSK <= gc.MIRROR4_WSK) {
+                    addToMap(actions, getMirrors4(new Position(x, y)), type);
+                } else {
+                    addToMap(actions, getMirrors8(new Position(x, y)), type);
+                }
+            } else {
+                i--; // TODO: Remove this
+            }
+        }
+    }
 
     private Action generateActionType() {
         double wsk = rand.nextDouble();
@@ -175,12 +168,6 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
             return Actions.MOVE_TO_FREE_POSITION;
         }
         return Actions.MOVE_OR_ATTACK_ACTION;
-    }
-
-    private void createWalkActions(int dx,int dy){
-
-
-
     }
 
 
@@ -225,34 +212,44 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
         return list;
     }
 
+//------------ walk actions ------------------------------------------------------
 
+    private void generateWalkActions(ActionMap actions){
+        int number = dice(gc.MOVE_PATTERN_NUMBER_WSKS);
+        for(int i=0;i<number;i++){
 
-
-    //--------------------------------------------------------
-/*
-    public static void main(String[] args) {
-        Random rand = new Random(123);
-        System.out.println(rand.nextDouble());
+            EWalkType type = EWalkType.values()[dice(gc.MOVE_PATTERN_TYPE_WSKS)];
+            int length = dice(gc.MOVE_PATTERN_LENGTH_WSKS);
+            createWalkActions(actions,type,length);
+        }
     }
 
-    private void start() {
-        //check wsks
-         System.out.println(sum(gc.DISTANCE_WSKS));
-         System.out.println(sum(gc.CIRCLES_WSKS));
+    private void createWalkActions(ActionMap actions,EWalkType type,int length){
+        if(length<1 || length>8){
+            return;
+        }
+        for(Position pos:type.getdPos()){
+           // System.out.println("diagonal to: " + pos.getX()*length+" , "+ pos.getY()*length);
+            createWalkDiagonal(actions,pos.add(pos.getX()*length,-pos.getY()*length));
+        }
+    }
 
-        char[][] moves = new char[2 * gc.DISTANCE_WSKS.size() + 1][2 * gc.DISTANCE_WSKS.size() + 1];
-        for (int i = 0; i < moves.length; i++) {
-            for (int j = 0; j < moves.length; j++) {
-                moves[i][j] = '-';
-                if (i == gc.DISTANCE_WSKS.size() && j == gc.DISTANCE_WSKS.size()) {
-                    moves[i][j] = 'P';
-                }
+    private void createWalkDiagonal(ActionMap actions,final Position pos){
+        final int x = pos.getX();
+        final int y = pos.getY();
+        if(Math.abs(x)!=Math.abs(y)){
+            if(x==0 && y==0){
+                return;
             }
         }
-        ActionMap actions = generateActions();
-        for (Position pos : actions.keySet()) {
-            moves[pos.getX() + gc.DISTANCE_WSKS.size()][pos.getY() + gc.DISTANCE_WSKS.size()] = 'X';
+
+        Position walkPos = new Position(0,0);
+        for(int i=0;i<Math.max(Math.abs(x),Math.abs(y));i++){
+            final int dx = pos.getX()!=0?pos.getX()/Math.abs(pos.getX()):0;
+            final int dy = pos.getY()!=0?pos.getY()/Math.abs(pos.getY()):0;
+            //System.out.println("added walkaction: " + dx + " , " + dy);
+            walkPos = walkPos.add(dx,dy);
+            actions.put(walkPos, Actions.WALK_AND_MOVE_OR_ATTACK);
         }
-        showMoves(moves);
-    }*/
+    }
 }
