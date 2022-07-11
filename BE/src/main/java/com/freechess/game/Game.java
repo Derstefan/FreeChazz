@@ -40,7 +40,7 @@ public class Game {
     public Game(GameParams params){
         gameId = UUID.randomUUID();
         SymmetricBoardGenerator gen = params.getSeed()!=null?new SymmetricBoardGenerator(params.getSeed()):new SymmetricBoardGenerator();
-        board = params.getESize()!=null?gen.generate(params.getESize().getSize(),params.getESize().getSize()):gen.generate();
+        board = params.getESize()!=null?gen.generate(params.getESize()):gen.generate();
         playersTurn = diceStartPlayer();
     }
 

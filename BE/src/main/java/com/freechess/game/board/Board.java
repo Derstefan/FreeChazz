@@ -2,6 +2,7 @@ package com.freechess.game.board;
 
 import com.freechess.game.pieces.IPieceType;
 import com.freechess.game.pieces.Piece;
+import com.freechess.game.pieces.PieceWrapper;
 import com.freechess.game.pieces.impl.PieceType;
 import com.freechess.game.player.EPlayer;
 import lombok.extern.slf4j.Slf4j;
@@ -63,19 +64,20 @@ public class Board {
     }
 
     public void removePiece(Position pos){
-        if(getWinner().isPresent()){
-            return;
-        }
         Piece p = board[pos.getX()][pos.getY()];
         board[pos.getY()][pos.getX()] = null;
     }
 
     public void addPiece(Piece piece,Position pos){
-        if(getWinner().isPresent()){
-            return;
-        }
         piece.setPosition(pos);
         board[pos.getY()][pos.getX()] = piece;
+    }
+
+    public void swapPieces(Position pos1,Position pos2){
+        Piece p1 = pieceAt(pos1);
+        Piece p2 = pieceAt(pos2);
+        addPiece(p1,pos2);
+        addPiece(p2,pos1);
     }
 
     /**
@@ -170,6 +172,7 @@ public class Board {
     }
 
     public void setKing1(Piece king1) {
+        king1.setKing("1");
         this.king1 = king1;
     }
 
@@ -178,6 +181,7 @@ public class Board {
     }
 
     public void setKing2(Piece king2) {
+        king2.setKing("1");
         this.king2 = king2;
     }
 

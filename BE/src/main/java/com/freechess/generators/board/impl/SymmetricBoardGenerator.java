@@ -3,6 +3,7 @@ package com.freechess.generators.board.impl;
 
 import com.freechess.game.board.Board;
 import com.freechess.game.board.BoardBuilder;
+import com.freechess.game.board.ESize;
 import com.freechess.game.board.Position;
 import com.freechess.game.pieces.IPieceType;
 import com.freechess.game.pieces.Piece;
@@ -18,11 +19,10 @@ public class SymmetricBoardGenerator implements BoardGenerator {
     private static final int MAX_LVL = 5;
     private static final int POOL_SIZE = 5;
 
-    private static final int DEFAULT_WIDTH = 15;
-    private static final int DEFAULT_HEIGHT = 15;
-
     private Random rand;
     private long seed;
+
+    private ESize eSize;
     private HashMap<Integer, ArrayList<IPieceType>> piecePool = new HashMap<>();
     private BoardBuilder builder;
     private PieceTypeGeneratorPool generator;
@@ -42,13 +42,14 @@ public class SymmetricBoardGenerator implements BoardGenerator {
     }
 
     public Board generate(){
-        return generate(DEFAULT_WIDTH,DEFAULT_HEIGHT);
+        return generate(ESize.small);
     }
 
-    public Board generate(int width,int height)
+    public Board generate(ESize eSize)
     {
+        this.eSize = eSize;
         generatePiecePool();
-        builder = new BoardBuilder(width,height);
+        builder = new BoardBuilder(eSize.getWidth(),eSize.getHeight());
 
         putKing(EPlayer.P1);
         putKing(EPlayer.P2);
@@ -72,7 +73,13 @@ public class SymmetricBoardGenerator implements BoardGenerator {
     }
 
     private void putKing(EPlayer player) {
-        IPieceType kingType = generateRandomPieceType(4);
+        IPieceType kingType;
+        if(ESize.big.equals(eSize)){
+            kingType = generateRandomPieceType(5);
+        } else {
+            kingType = generateRandomPieceType(4);
+        }
+
         Piece king = new Piece(player, kingType);
         Position pos;
         if(player.equals(EPlayer.P1)){
@@ -85,17 +92,35 @@ public class SymmetricBoardGenerator implements BoardGenerator {
 
     //TODO: better implementation - more dynamic for different board sizes ?
     public void putPieces() {
-        addPiecesToBoard(piecePool.get(1),randomPositions(8,1),true);
-        addPiecesToBoard(piecePool.get(2),randomPositions(10,2),true);
-        addPiecesToBoard(piecePool.get(3),randomPositions(4,3),true);
+        if(ESize.big.equals(eSize)){
+            addPiecesToBoard(piecePool.get(1),randomPositions(27,9),true);
+            addPiecesToBoard(piecePool.get(2),randomPositions(22,8),true);
+            addPiecesToBoard(piecePool.get(3),randomPositions(14,7),true);
+            addPiecesToBoard(piecePool.get(4),randomPositions(8,5),true);
+            addPiecesToBoard(piecePool.get(5),randomPositions(4,3),true);
+
+        } else if(ESize.medium.equals(eSize)) {
+            addPiecesToBoard(piecePool.get(1),randomPositions(14,6),true);
+            addPiecesToBoard(piecePool.get(2),randomPositions(17,5),true);
+            addPiecesToBoard(piecePool.get(3),randomPositions(8,4),true);
+            addPiecesToBoard(piecePool.get(4),randomPositions(4,2),true);
+        } else{
+            addPiecesToBoard(piecePool.get(1),randomPositions(8,3),true);
+            addPiecesToBoard(piecePool.get(2),randomPositions(10,2),true);
+            addPiecesToBoard(piecePool.get(3),randomPositions(4,1),true);
+        }
     }
 
 
     private ArrayList<Position> randomPositions(int number, int line) {
-        if ((line != 1 && line != 2 && line != 3) || number <= 0) {
+        if ((line>=eSize.getHeight()/2) || number <= 0) {
             return new ArrayList<Position>();
         }
-        return GenUtil.getRandomPosOfArea(0, builder.getWidth() - 1,  1/2*builder.getHeight() + line, 1/2*builder.getHeight() + 1 + line, number,rand);
+        return GenUtil.getRandomPosOfArea(
+                0,
+                builder.getWidth() - 1,
+                1/2*builder.getHeight() + line,
+                1/2*builder.getHeight() + 1 + line, number,rand);
     }
 
     private void addPiecesToBoard(ArrayList<IPieceType> pieces, ArrayList<Position> positions, boolean mirrored) {

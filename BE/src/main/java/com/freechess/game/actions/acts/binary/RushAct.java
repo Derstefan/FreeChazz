@@ -1,18 +1,18 @@
-package com.freechess.game.actions.conditions.binary;
+package com.freechess.game.actions.acts.binary;
 
-import com.freechess.game.actions.conditions.Condition;
+import com.freechess.game.actions.acts.Act;
 import com.freechess.game.board.Board;
 import com.freechess.game.board.Position;
-
+import com.freechess.game.pieces.Piece;
 
 /**
- * Checks if the path between two positions is free (exluding start- and endpoint)
+ * Attacks all pieces (enemy and friends) in a line
  */
-public class ClearPathCondition extends Condition {
-
+public class RushAct extends Act {
     @Override
-    public boolean check(Board board, Position pos1, Position pos2) {
+    public void perform(Board board, Position pos1, Position pos2) throws Exception {
 
+        Piece piece = board.pieceAt(pos1);
         // check equal pos
         if(pos1.equals(pos2)){
             throw new IllegalArgumentException();
@@ -26,13 +26,14 @@ public class ClearPathCondition extends Condition {
         int x = pos1.getX();
         int y = pos1.getY();
 
-        for(int i=1;i<l;i++){
+        for(int i=1;i<=l;i++){
             x-=dx/l;
             y-=dy/l; //HERE is the minus!!!
             if(!board.isFree(x,y)){
-                return false;
+                board.takePiece(new Position(x,y));
             }
         }
-        return true;
+        board.removePiece(pos1);
+        board.addPiece(piece,pos2);
     }
 }

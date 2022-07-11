@@ -24,10 +24,11 @@ public class BoardBuilder {
         this.board = Board.getInstance(width,height);
     }
 
-    public void putPiece(Piece piece, Position pos){
+    public BoardBuilder putPiece(Piece piece, Position pos){
         piece.setId(idCounter);
         idCounter++;
         board.addPiece(piece,pos);
+        return this;
     }
 
     public void putPieces(HashMap<Position, Piece> pieces){

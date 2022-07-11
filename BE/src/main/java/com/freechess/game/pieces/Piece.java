@@ -17,14 +17,18 @@ public class Piece {
 
     private Position position;
 
+    private String king;
 
     private EPlayer owner;
     private ArrayList<Position> possibleMoves = new ArrayList<>();
 
 
+
+
     public Piece(EPlayer owner, IPieceType pieceType){
         this.owner = owner;
         this.pieceType = pieceType;
+        this.king = "0";
     }
 
     public void addPossibleMove(Position move){
@@ -59,6 +63,18 @@ public class Piece {
         return pieceType.getSerial();
     }
 
+    public String getKing() {
+        return king;
+    }
+
+    public void setKing(String king) {
+        if(king=="1"){
+            this.king = "1";
+        } else {
+            this.king = "0";
+        }
+
+    }
 
     public Position getPosition() {
         return position;

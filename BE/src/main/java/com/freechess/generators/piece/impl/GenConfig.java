@@ -20,11 +20,19 @@ public class GenConfig {
 
     public double ENEMY_MOVE_WSK = 0.1f;
     public double FREE_FIELD_MOVE_WSK = 0.1f;
-    public double BOTH_MOVE_WSK = 0.8f;
+
+    public double SWAP_WSK = 0.1f;
+    public double BOTH_MOVE_WSK = 0.7f;
 
     public List<Double> MOVE_PATTERN_NUMBER_WSKS = Arrays.asList(0.2,0.8);
     public List<Double> MOVE_PATTERN_TYPE_WSKS = Arrays.asList(0.8,0.0666,0.0666,0.0667,0.0,0.0);
     public List<Double> MOVE_PATTERN_LENGTH_WSKS = Arrays.asList(0.0,0.2,0.2,0.2,0.2,0.2);
+
+    public List<Double> RUSH_PATTERN_NUMBER_WSKS = Arrays.asList(0.02,0.98);
+
+    public List<Double> RUSH_PATTERN_TYPE_WSKS = Arrays.asList(0.8,0.0666,0.0666,0.0667,0.0,0.0);
+
+    public List<Double> RUSH_PATTERN_LENGTH_WSKS = Arrays.asList(0.0,0.0,0.5,0.5,0.0,0.0);
 
     public GenConfig(int lvl) {
         setLvl(lvl);
@@ -101,6 +109,13 @@ public class GenConfig {
                 ENEMY_MOVE_WSK = 0.1f;
                 FREE_FIELD_MOVE_WSK = 0.1f;
                 BOTH_MOVE_WSK = 0.8f;
+
+                MOVE_PATTERN_NUMBER_WSKS = Arrays.asList(0.2,0.4,0.4);
+                MOVE_PATTERN_TYPE_WSKS = Arrays.asList(0.3,0.2,0.2,0.1,0.1,0.1);
+
+                RUSH_PATTERN_NUMBER_WSKS = Arrays.asList(0.7,0.2,0.1);
+                RUSH_PATTERN_LENGTH_WSKS = Arrays.asList(0.0,0.0,0.4,0.3,0.3,0.0);
+
             case 5:
                 addPositionWskAtY(4, Arrays.asList(0.04, 0.04, 0.04, 0.04, 0.04));
                 addPositionWskAtY(3, Arrays.asList(0.04, 0.04, 0.04, 0.04, 0.04));
@@ -116,6 +131,12 @@ public class GenConfig {
                 ENEMY_MOVE_WSK = 0.1f;
                 FREE_FIELD_MOVE_WSK = 0.1f;
                 BOTH_MOVE_WSK = 0.8f;
+
+                MOVE_PATTERN_NUMBER_WSKS = Arrays.asList(0.2,0.3,0.3,0.2);
+                MOVE_PATTERN_TYPE_WSKS = Arrays.asList(0.0,0.0,0.3,0.3,0.2,0.2);
+
+                RUSH_PATTERN_NUMBER_WSKS = Arrays.asList(0.5,0.3,0.2);
+                RUSH_PATTERN_LENGTH_WSKS = Arrays.asList(0.0,0.0,0.3,0.3,0.2,0.2);
                 break;
             default:
                 addPositionWskAtY(4, Arrays.asList(0.04, 0.04, 0.04, 0.04, 0.04));

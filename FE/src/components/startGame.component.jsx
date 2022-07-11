@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import mainService from '../services/main.service';
+import { Button, TextField } from '@mui/material';
 
 class StartComponent extends Component {
     constructor(props) {
@@ -15,12 +16,6 @@ class StartComponent extends Component {
         this.changeSeed = this.changeSeed.bind(this);
         this.changeSize = this.changeSize.bind(this);
         this.startGame = this.startGame.bind(this);
-    }
-
-    componentDidMount() {
-        // EmployeeService.getEmployeeById(this.state.id).then( res => {
-        //     this.setState({employee: res.data});
-        // })
     }
 
 
@@ -67,13 +62,13 @@ class StartComponent extends Component {
         return (
             <div>
                 <div className="m-5">
-                    name:<input value={name} onChange={this.changeName} />
+                    <TextField id="filled-basic" label="name" variant="standard" value={name} onChange={this.changeName} />
                 </div>
                 {this.state.isActive !== true && (<label onClick={this.handleShow}>more details...</label>)}
                 {this.state.isActive && <div id="params">
 
                     <div className="m-5" >
-                        seed:<input value={seed} onChange={this.changeSeed} />
+                        <TextField id="filled-basic" label="Seed" variant="standard" value={seed} onChange={this.changeSeed} />
                     </div>
                     <label>
                         Size:
@@ -86,7 +81,7 @@ class StartComponent extends Component {
                 </div>}
 
                 <div className="m-5" >
-                    <button type="button" onClick={this.startGame}>new Game</button>
+                    <Button type="button" onClick={this.startGame}>new Game</Button>
                 </div>
             </div>
         )
