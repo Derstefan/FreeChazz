@@ -6,11 +6,9 @@ import com.freechess.game.pieces.impl.ActionMap;
 import com.freechess.game.pieces.impl.PieceType;
 import com.freechess.game.board.Position;
 import com.freechess.game.pieces.impl.PieceTypeBuilder;
-import com.freechess.game.player.EPlayer;
 import com.freechess.generators.piece.IPieceTypeGenerator;
 import com.freechess.generators.piece.PieceTypeGeneratorParam;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class PieceTypeGenerator implements IPieceTypeGenerator {
@@ -74,6 +72,7 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
 
         generateJumpActions(actions);
         generateWalkActions(actions);
+        generateRushActions(actions);
 
         return actions;
     }
@@ -166,6 +165,8 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
             return Actions.MOVE_TO_ENEMY_POSITION;
         } else if (wsk - gc.ENEMY_MOVE_WSK <= gc.FREE_FIELD_MOVE_WSK) {
             return Actions.MOVE_TO_FREE_POSITION;
+        } else if(wsk-gc.ENEMY_MOVE_WSK - gc.FREE_FIELD_MOVE_WSK<=gc.SWAP_WSK){
+            return Actions.SWAP_POSITIONS_ACTION;
         }
         return Actions.MOVE_OR_ATTACK_ACTION;
     }
@@ -212,7 +213,7 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
         return list;
     }
 
-//------------ walk actions ------------------------------------------------------
+//------------ line actions ------------------------------------------------------
 
     private void generateWalkActions(ActionMap actions){
         int number = dice(gc.MOVE_PATTERN_NUMBER_WSKS);
@@ -220,21 +221,31 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
 
             EWalkType type = EWalkType.values()[dice(gc.MOVE_PATTERN_TYPE_WSKS)];
             int length = dice(gc.MOVE_PATTERN_LENGTH_WSKS);
-            createWalkActions(actions,type,length);
+            createLineActions(actions,type,length,Actions.WALK_AND_MOVE_OR_ATTACK);
         }
     }
 
-    private void createWalkActions(ActionMap actions,EWalkType type,int length){
+    private void generateRushActions(ActionMap actions){
+        int number = dice(gc.RUSH_PATTERN_NUMBER_WSKS);
+        for(int i=0;i<number;i++){
+
+            EWalkType type = EWalkType.values()[dice(gc.RUSH_PATTERN_TYPE_WSKS)];
+            int length = dice(gc.RUSH_PATTERN_LENGTH_WSKS);
+            createLineActions(actions,type,length,Actions.RUSH_ACTION);
+        }
+    }
+
+    private void createLineActions(ActionMap actions, EWalkType type, int length, Action action){
         if(length<1 || length>8){
             return;
         }
         for(Position pos:type.getdPos()){
            // System.out.println("diagonal to: " + pos.getX()*length+" , "+ pos.getY()*length);
-            createWalkDiagonal(actions,pos.add(pos.getX()*length,-pos.getY()*length));
+            createDiagonal(actions,pos.add(pos.getX()*length,-pos.getY()*length),action);
         }
     }
 
-    private void createWalkDiagonal(ActionMap actions,final Position pos){
+    private void createDiagonal(ActionMap actions, final Position pos, Action action){
         final int x = pos.getX();
         final int y = pos.getY();
         if(Math.abs(x)!=Math.abs(y)){
@@ -249,7 +260,7 @@ public class PieceTypeGenerator implements IPieceTypeGenerator {
             final int dy = pos.getY()!=0?pos.getY()/Math.abs(pos.getY()):0;
             //System.out.println("added walkaction: " + dx + " , " + dy);
             walkPos = walkPos.add(dx,dy);
-            actions.put(walkPos, Actions.WALK_AND_MOVE_OR_ATTACK);
+            actions.put(walkPos, action);
         }
     }
 }

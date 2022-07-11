@@ -13,8 +13,6 @@ public class ClearPathCondition extends Condition {
     @Override
     public boolean check(Board board, Position pos1, Position pos2) {
 
-        // wie hindere ich pos1 oder pos2 hier drin zu bearbeiten - protected?
-
         // check equal pos
         if(pos1.equals(pos2)){
             throw new IllegalArgumentException();
@@ -29,7 +27,7 @@ public class ClearPathCondition extends Condition {
         int y = pos1.getY();
 
         for(int i=1;i<l;i++){
-            x+=dx/l;
+            x-=dx/l;
             y-=dy/l; //HERE is the minus!!!
             if(!board.isFree(x,y)){
                 return false;

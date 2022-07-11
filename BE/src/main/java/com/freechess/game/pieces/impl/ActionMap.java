@@ -3,15 +3,14 @@ package com.freechess.game.pieces.impl;
 import com.freechess.game.actions.Action;
 import com.freechess.game.board.Position;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 
 
-/*
-    ToDo: mehrere Actions pro feld möglich? erstmal lieber nein!
- */
+
 public class ActionMap {
     public static final int width = 7;
     public static final int height = 7;
@@ -20,11 +19,17 @@ public class ActionMap {
     private Map<Position, Action> actions = new HashMap<>();
 
     public boolean put(Position pos,Action action){
+        ArrayList<Position> posList = new ArrayList<>();
         for(Position p: keySet()){
             if(p.equals(pos)){
-                return false;
+                posList.add(p);
+
             }
         }
+        for(Position p: posList){
+            actions.remove(p);
+        }
+
         actions.put(pos,action);
         return true;
     }

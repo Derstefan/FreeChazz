@@ -2,7 +2,6 @@ import { Component } from 'react'
 import RandomGenerator from './random-generator';
 import UtilFunctions from './util-functions';
 import { Bodies } from 'matter-js';
-//mport decomp from 'poly-decomp';
 
 class PieceGenerator {
 
@@ -34,6 +33,12 @@ class PieceGenerator {
             var y = this.gen.randNumOfRange(0, this.height);
             points.push({ x: x, y: y });
         }
+        // TODO: check if some area is there
+        // let area = UtilFunctions.polygonArea(points);
+        // if (area < 4) {
+        //     console.log(points);
+        //     points = this.randomPoints(num);
+        // }
         return points;
     }
 
@@ -115,6 +120,7 @@ class PieceGenerator {
         var points = this.randomPoints(pointNumber);
         //console.log(UtilFunctions.polygonArea(points));
         var color = this.randomColor();
+
 
         this.c2.fillStyle = color;
         this.c2.fill(this.drawShape(points));

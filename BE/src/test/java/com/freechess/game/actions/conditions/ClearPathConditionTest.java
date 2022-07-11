@@ -1,5 +1,6 @@
 package com.freechess.game.actions.conditions;
 
+import com.freechess.game.actions.conditions.binary.ClearPathCondition;
 import com.freechess.game.board.Board;
 import com.freechess.game.board.BoardBuilder;
 import com.freechess.game.board.Position;
@@ -30,6 +31,23 @@ public class ClearPathConditionTest {
 
         assertThat(king1.canMoveTo(new Position(4,5))).isFalse();
         assertThat(king2.canMoveTo(new Position(4,9))).isFalse();
-
     }
+
+    @Test
+    public void simpleBoardTest2(){
+
+        Piece king1 = new Piece(EPlayer.P1,WALK1);
+        Piece p1 = new Piece(EPlayer.P1,WALK1);
+        Piece king2 = new Piece(EPlayer.P2,WALK1);
+        Board board = new BoardBuilder(15,15)
+                .putKing(EPlayer.P1,king1,new Position(4,8))
+                .putKing(EPlayer.P2, king2,new Position(4,6))
+                .putPiece(p1,new Position(4,7))
+                .build();
+
+        assertThat(king1.canMoveTo(new Position(4,7))).isFalse();
+    }
+
+
+
 }

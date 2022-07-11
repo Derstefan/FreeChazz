@@ -7,12 +7,15 @@ import Config from "./config.json";
 import RenderFunctions from "./render-functions.js";
 import serverConfig from "../services/server-config.json";
 import { Engine, Runner, Composite, Bodies, Body } from 'matter-js';
+import { Box, Button, Modal, ThemeProvider, Typography } from '@mui/material';
+import Design from './themes/Design';
 
 
 class GameComponent extends Component {
 
     constructor(props) {
         super(props)
+
         this.state = {
             gameId: JSON.parse(localStorage.getItem("auth")).gameId,
             me: JSON.parse(localStorage.getItem("auth")).player,
@@ -53,8 +56,13 @@ class GameComponent extends Component {
             matterBodies: [],
             showAnimation: false,
 
+            //newGame Modal
+            open: false,
+
 
         }
+        //endanimation
+        this.endSequence = false;
 
         //matter.js init
         //start matter.js runner
@@ -71,6 +79,11 @@ class GameComponent extends Component {
         this.loadBoard = this.loadBoard.bind(this);
         this.loadPieceData = this.loadPieceData.bind(this);
         this.createMatterBodies = this.createMatterBodies.bind(this);
+        this.copyLink = this.copyLink.bind(this);
+        this.newGame = this.newGame.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+        this.openModal = this.openModal.bind(this);
+
 
     }
 
@@ -100,7 +113,7 @@ class GameComponent extends Component {
 
                 this.loadBoard();
             }
-
+            //console.log(res.data.winner);
             //check game end ?
         });
     }
@@ -155,13 +168,6 @@ class GameComponent extends Component {
                 this.setState({ showAnimation: true });
             }
 
-
-            //  let bodyList = this.createMatterBodies(deletedPieces);
-            //            console.log(bodyList.length);
-            // console.log(Composite.allBodies(engine.world));
-
-
-
             let bv = this.createBoard(res.data.board);
             this.setState({ boardData: res.data, boardView: bv, graveyard: res.data.graveyard, matterBodies: matterBodiesUpdate, width: bv[0].length, height: bv.length });
         });
@@ -192,7 +198,6 @@ class GameComponent extends Component {
     // save Board data
     createBoard(board) {
         let bv = board;
-
         for (let i = 0; i < bv.length; i++) {
             for (let j = 0; j < bv[0].length; j++) {
                 if (board[i][j] === null) {
@@ -208,7 +213,8 @@ class GameComponent extends Component {
                         owner: bv[i][j].owner,
                         possibleMoves: bv[i][j].possibleMoves,
                         serial: bv[i][j].serial,
-                        seed: bv[i][j].seed
+                        seed: bv[i][j].seed,
+                        king: bv[i][j].king
                     };
                 }
             }
@@ -294,7 +300,7 @@ class GameComponent extends Component {
     }
 
     drawMethod() {
-        const { width, height, boardView, selectedField, me, pieceImagesSmall, isInited, winner, pieceId, selectedPiece, pieceCard, actions, pieceImages, engine, matterBodies } = this.state;
+        const { width, height, boardView, selectedField, me, pieceImagesSmall, isInited, winner, pieceId, selectedPiece, pieceCard, actions, pieceImages, engine, matterBodies, player1, player2, round } = this.state;
 
 
         const draw = (ctx, frameCount) => {
@@ -306,29 +312,35 @@ class GameComponent extends Component {
                 ctx.canvas.width = squareSize * (width + 1) + Config.card.width;
                 ctx.canvas.height = squareSize * (height + 1);
 
+                if (player1 !== null && player2 != null) {
+                    ctx.font = "10px Arial";
+                    let txt = player1.name + "  vs.  " + player2.name + "       round: " + round;
+                    ctx.fillText(txt, boardTopx, boardTopy - 10);
+                }
+
                 //draw card
                 if (pieceId !== "") {
                     var cardPicsize = Config.card.width;
                     var grd = ctx.createRadialGradient(squareSize * (width + 1) + cardPicsize / 2, 0 + cardPicsize * 0.625, 2, squareSize * (width + 1) + cardPicsize / 2, 0 + cardPicsize * 0.625, cardPicsize * 0.5);
                     grd.addColorStop(0, "black");
                     if (selectedPiece.owner === me) {
-                        grd.addColorStop(1, "rgba(0,100,0,0.1)");
+                        grd.addColorStop(1, "rgba(0,170,0,0.1)");
                     } else {
-                        grd.addColorStop(1, "rgba(100,0,0,0.1)");
+                        grd.addColorStop(1, "rgba(170,0,0,0.1)");
                     }
                     // Fill with gradient
                     ctx.fillStyle = grd;
                     ctx.fillRect(squareSize * (width + 1), + cardPicsize * 0.125, cardPicsize, cardPicsize);
 
-                    ctx.drawImage(pieceCard.drawPieceCard(actions.get(pieceId), pieceImages.get(pieceId), selectedPiece.owner), squareSize * (width + 1), 0);
+                    ctx.drawImage(pieceCard.drawPieceCard(actions.get(pieceId), pieceImages.get(pieceId), selectedPiece.owner, selectedPiece.king === "1"), squareSize * (width + 1), 0);
                 }
 
                 //draw board
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
                         ctx.fillStyle = ((i + j) % 2 === 0) ? Config.board.color1 : Config.board.color2;
-                        let xOffset = boardTopx + j * squareSize;
-                        let yOffset = boardTopy + i * squareSize;
+                        let xOffset = boardTopx + i * squareSize;
+                        let yOffset = boardTopy + j * squareSize;
                         ctx.fillRect(xOffset, yOffset, squareSize, squareSize);
                     }
                 }
@@ -375,9 +387,9 @@ class GameComponent extends Component {
                                     var grd = ctx.createRadialGradient(xOffset + squareSize / 2, yOffset + squareSize * 0.6, 2, xOffset + squareSize / 2, yOffset + squareSize * 0.6, squareSize * 0.5);
                                     grd.addColorStop(0, "black");
                                     if (boardView[j][i].owner === me) {
-                                        grd.addColorStop(1, "rgba(0,100,0,0.1)");
+                                        grd.addColorStop(1, "rgba(0,170,0,0.1)");
                                     } else {
-                                        grd.addColorStop(1, "rgba(100,0,0,0.1)");
+                                        grd.addColorStop(1, "rgba(170,0,0,0.1)");
                                     }
                                     // Fill with gradient
                                     ctx.fillStyle = grd;
@@ -385,8 +397,11 @@ class GameComponent extends Component {
 
                                     ctx.drawImage(pieceImagesSmall.get(boardView[j][i].symbol), xOffsetPic, yOffsetPic);
                                 }
-                                //}
-
+                                if (boardView[j][i].king === "1") {
+                                    ctx.font = "10px Arial";
+                                    ctx.fillStyle = "#111111";
+                                    ctx.fillText("♔", xOffset + 0.8 * squareSize, yOffset + squareSize / 6);
+                                }
 
                             }
                         }
@@ -395,6 +410,9 @@ class GameComponent extends Component {
                 //animation
                 //console.log("active bodies:", matterBodies.length);
                 if (matterBodies.length != 0) {
+                    if (winner !== null) {
+                        this.endSequence = true;
+                    }
                     RenderFunctions.renderMatterAnimation(ctx, matterBodies, frameCount);
                     matterBodies.forEach(b => {
                         if (b.alpha <= 0) {
@@ -402,17 +420,19 @@ class GameComponent extends Component {
                             matterBodies.splice(matterBodies.indexOf(b), 1);
                         }
                     })
+
                 }
 
 
 
                 // draw winner
-                if (winner !== null) {
-                    ctx.fillStyle = "rgba(100,100,100,0.8)"
+                //console.log(frameCount);
+                if (winner !== null && matterBodies.length === 0 && this.endSequence === true) {
+                    ctx.fillStyle = "rgba(100,100,100,0.7)"
                     ctx.fillRect(boardTopx, boardTopy, squareSize * width, squareSize * height)
 
                     ctx.fillStyle = "red"
-                    ctx.font = '30px serif';
+                    ctx.font = '30px arial';
                     ctx.fillText(winner.name + ' wins!', squareSize * width / 3, squareSize * height / 2);
                 }
 
@@ -430,25 +450,66 @@ class GameComponent extends Component {
         return "Wait for opponents turn...";
     }
 
+    copyLink() {
+        const { inviteLink } = this.state;
+        navigator.clipboard.writeText(inviteLink);
+    }
+
+    openModal() {
+        this.setState({ open: true });
+    }
+
+    closeModal() {
+        this.setState({ open: false });
+    }
+
+    newGame() {
+        const { history } = this.props;
+
+        history.push("/");
+    }
+
 
     render() {
-        const { inviteLink, player1, player2, round, isInited, winner } = this.state;
+        const { player1, player2, round, isInited, winner, open } = this.state;
 
         if (isInited) {
             return (
                 <div>
-                    <div>{this.drawGameText()} {" "} {winner !== null && "The Winner is" + winner.name}</div>
+                    <div className="row">
+                        <ThemeProvider theme={Design.theme1}>
+                            <div class="col-"><Button variant="outlined" onClick={this.openModal} color="neutral">New Game</Button></div>
+                            <div class="col-"><Button variant="outlined" onClick={this.copyLink} color="neutral">Copy Invitelink</Button></div>
+                        </ThemeProvider>
+                        <div class="col-sm">
+                            {winner === null && this.drawGameText()}
+                        </div>
+
+                    </div>
                     <div className="row">
                         <div class="mb-5">
                             <Canvas draw={this.drawMethod()} onClick={this.clickOnCanvas} />
 
-                            <div>{inviteLink}</div>
-                            <div>
-                                Player1: {player1 && player1.name} {player2 && <>Player2: {player2.name}</>} {" round:"}{round}
-                            </div>
                         </div>
                     </div >
-                </div>
+                    {/*new game modal??*/}
+                    <Modal
+                        open={open}
+                        onClose={this.closeModal}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={Design.style}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                Start a new game?
+                            </Typography>
+                            <ThemeProvider theme={Design.theme1}>
+                                <Button color="neutral" onClick={this.newGame}>Yes</Button>
+                                <Button color="neutral" onClick={this.closeModal}>Cancel</Button>
+                            </ThemeProvider>
+                        </Box>
+                    </Modal>
+                </div >
             )
         }
         return "";

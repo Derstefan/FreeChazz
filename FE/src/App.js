@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <HeaderComponent />
+        {/*<HeaderComponent />*/}
         <div className="container">
           <Switch>
             <Route path="/" exact component={StartComponent}></Route>

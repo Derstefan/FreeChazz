@@ -2,15 +2,21 @@ package com.freechess.game.board;
 
 public enum ESize {
 
-    small(15),medium(20),big(30);
+    small(15,15),medium(20,20),big(30,30);
 
-    int size;
+    int width;
+    int height;
 
-    ESize(int size) {
-        this.size = size;
+    ESize(int width,int height) {
+        this.width = width;
+        this.height = height;
     }
 
-    public int getSize() {
-        return size;
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

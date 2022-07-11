@@ -1,9 +1,12 @@
 package com.freechess.server.controller;
 
 
+import com.freechess.game.pieces.Piece;
 import com.freechess.game.player.EPlayer;
 import com.freechess.game.Game;
 import com.freechess.game.player.Player;
+import com.freechess.generators.piece.PieceTypeGeneratorParam;
+import com.freechess.generators.piece.impl.PieceTypeGenerator;
 import com.freechess.server.DTO.DrawData;
 import com.freechess.server.DTO.GameData;
 import com.freechess.game.board.Board;
@@ -98,12 +101,31 @@ public class GameController {
             Game game = server.getGameById(gameId);
             if(game!=null){
                 Board board = game.getBoard();
+                //System.out.println(board.getBoard()[0][7].getId());
                 return ResponseEntity.ok(board);
             } else {
                 return ResponseEntity.notFound().build();
             }
         }
         return ResponseEntity.status(401).body(null);
+    }
+
+    @GetMapping("pieceTest")
+    public ResponseEntity<Piece> getPiece(){
+        PieceTypeGenerator gen = new PieceTypeGenerator();
+        return ResponseEntity.status(401).body(new Piece(EPlayer.P1,gen.generate(new PieceTypeGeneratorParam(1,12312))));
+    }
+
+    @GetMapping("BoardTest")
+    public ResponseEntity<Board> getBoard(){
+        Game game = server.createGame();
+        Player player1 = new Player("blabla", EPlayer.P1);
+        game.join(player1);
+
+        UUID playerId = player1.getPlayerId();
+        UUID gameId = game.getGameId();
+
+        return ResponseEntity.ok(game.getBoard());
     }
 
 
